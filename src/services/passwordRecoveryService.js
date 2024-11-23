@@ -1,56 +1,39 @@
-import PasswordRecoveryModel from '../models/PasswordModel.js';
-import { ValidationError } from '../utils/customErrors.js';
-import crypto from 'crypto';
+import PasswordRecoveryModel from '../models/passwordRecoveryRequestModel.js';
 
-// Función para generar un token único y seguro
-const generateToken = () => {
-  return crypto.randomBytes(32).toString('hex');
+export const createPasswordRecoveryRequest = async (userId, token) => {
+  try {
+    // Crear una nueva solicitud de recuperación de contraseña
+    const recoveryRequest = new PasswordRecoveryModel({
+      userId,
+      token,
+    });
+
+    // Guardar la solicitud en la base de datos
+    await recoveryRequest.save();
+
+    return recoveryRequest;
+  } catch (error) {
+    throw new Error('Error al crear la solicitud de recuperación de contraseña: ' + error.message);
+  }
 };
 
-// Función para crear una solicitud de recuperación de contraseña
-export const createPasswordRecoveryRequest = async (userId) => {
-  // Validar que el ID de usuario esté presente
-  if (!userId) {
-    throw new ValidationError('El ID de usuario es requerido', [
-      { field: 'userId', msg: 'Este campo es obligatorio' },
-    ]);
+export const validatePasswordRecoveryToken = async (token) => {
+  try {
+    // Buscar la solicitud de recuperación por token
+    const recoveryRequest = await PasswordRecoveryModel.findOne({ token });
+
+    if (!recoveryRequest) {
+      throw new Error('Token de recuperación no encontrado');
+    }
+
+    // Verificar si el token ha expirado
+    if (recoveryRequest.expiresTokenTime < Date.now()) {
+      throw new Error('Token de recuperación expirado');
+    }
+
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
   }
-
-  // Eliminar solicitud existente si la hay
-  await PasswordRecoveryModel.findOneAndDelete({ userId });
-
-  // Crear nueva solicitud de recuperación
-  const newRequest = new PasswordRecoveryModel({
-    userId,
-    token: generateToken(),
-    expiresTokenTime: Date.now() + 3600000, // Token expira en 1 hora
-  });
-  
-  await newRequest.save();
-  return newRequest;
-};
-
-// Función para validar un token de recuperación
-export const validateRecoveryToken = async (token) => {
-  // Buscar la solicitud por token
-  const recoveryRequest = await PasswordRecoveryModel.findOne({ token });
-
-  // Verificar si el token existe y no ha expirado
-  if (!recoveryRequest || recoveryRequest.expiresTokenTime < Date.now()) {
-    throw new ValidationError('Token inválido o expirado');
-  }
-
-  return recoveryRequest;
-};
-
-// Función para eliminar una solicitud de recuperación
-export const deletePasswordRecoveryRequest = async (token) => {
-  // Buscar y eliminar la solicitud por token
-  const deletedRequest = await PasswordRecoveryModel.findOneAndDelete({ token });
-
-  if (!deletedRequest) {
-    throw new ValidationError('Solicitud no encontrada');
-  }
-
-  return deletedRequest;
 };

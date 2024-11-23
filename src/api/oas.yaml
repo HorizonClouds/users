@@ -620,10 +620,10 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                userId:
                   type: string
-                  description: Correo electrónico del usuario para el cual se solicita la recuperación
-                  example: "user@example.com"
+                  description: Id del usuario para el cual se solicita la recuperación
+                  example: "user456"
       responses:
         '201':
           description: Solicitud de recuperación de contraseña creada con éxito
