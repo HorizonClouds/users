@@ -1,5 +1,5 @@
 import express from 'express';
-import { loginHistoryValidator, loginHistoryIdValidator } from '../middlewares/validators.js';
+import { loginHistoryValidator, loginHistoryIdValidator } from '../middlewares/logInHistoryValidator.js';
 import {
   getAllLoginHistory,
   createLoginHistory,
@@ -10,15 +10,15 @@ import {
 const router = express.Router();
 
 // Route to get all login history
-router.get('/', getAllLoginHistory);
+router.get('/v1/loginHistory', getAllLoginHistory);
 
 // Route to create a new login history record
-router.post('/', loginHistoryValidator, createLoginHistory);
+router.post('/v1/loginHistory', loginHistoryValidator, createLoginHistory);
 
 // Route to get a specific login history record by ID
-router.get('/:id', loginHistoryIdValidator, getLoginHistoryById);
+router.get('/v1/loginHistory/:id', loginHistoryIdValidator, getLoginHistoryById);
 
 // Route to delete a specific login history record by ID
-router.delete('/:id', loginHistoryIdValidator, deleteLoginHistory);
+router.delete('/v1/loginHistory/:id', loginHistoryIdValidator, deleteLoginHistory);
 
 export default router;
