@@ -662,6 +662,199 @@ paths:
           description: Error de validación o contraseña no segura
         '404':
           description: Token de recuperación no válido o expirado
+
+  /friend-request:
+    post:
+      summary: Crear una nueva solicitud de amistad
+      tags:
+        - Friend Request
+      operationId: createFriendRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: ID del usuario que envía la solicitud
+                  example: "user123"
+                recipientUserId:
+                  type: string
+                  description: ID del usuario que recibirá la solicitud
+                  example: "user456"
+      responses:
+        '201':
+          description: Solicitud de amistad creada con éxito
+        '400':
+          description: Error de validación o solicitud pendiente existente
+        '404':
+          description: No se encuentra la solicitud pendiente
+  /friend-request/accept/{requestId}:
+    put:
+      summary: Aceptar una solicitud de amistad
+      tags:
+        - Friend Request
+      operationId: acceptFriendRequest
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: ID de la solicitud de amistad
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud de amistad aceptada con éxito
+        '404':
+          description: Solicitud de amistad no encontrada
+        '400':
+          description: La solicitud ya ha sido aceptada o rechazada
+  /friend-request/reject/{requestId}:
+    put:
+      summary: Rechazar una solicitud de amistad
+      tags:
+        - Friend Request
+      operationId: rejectFriendRequest
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: ID de la solicitud de amistad
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud de amistad rechazada con éxito
+        '404':
+          description: Solicitud de amistad no encontrada
+        '400':
+          description: La solicitud ya ha sido aceptada o rechazada
+  /friend-requests/{userId}:
+    get:
+      summary: Obtener todas las solicitudes de amistad de un usuario
+      tags:
+        - Friend Request
+      operationId: getFriendRequests
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitudes de amistad obtenidas con éxito
+        '404':
+          description: No hay solicitudes de amistad para este usuario
+  /friend-request/{requestId}:
+    delete:
+      summary: Eliminar una solicitud de amistad
+      tags:
+        - Friend Request
+      operationId: deleteFriendRequest
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          description: ID de la solicitud de amistad
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Solicitud de amistad eliminada con éxito
+        '404':
+          description: Solicitud de amistad no encontrada
+  /follow:
+    post:
+      summary: Crear un nuevo seguimiento
+      tags:
+        - Following
+      operationId: createFollowing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                followerUserId:
+                  type: string
+                  description: ID del usuario que realiza el seguimiento
+                  example: "user123"
+                followedUserId:
+                  type: string
+                  description: ID del usuario al que se sigue
+                  example: "user456"
+      responses:
+        '201':
+          description: Seguimiento creado con éxito
+        '400':
+          description: Ya sigues a este usuario
+        '404':
+          description: No se pudo realizar el seguimiento
+  /followers/{userId}:
+    get:
+      summary: Obtener todos los seguidores de un usuario
+      tags:
+        - Following
+      operationId: getFollowers
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Seguidores obtenidos con éxito
+        '404':
+          description: No se encontraron seguidores para este usuario
+  /followed/{userId}:
+    get:
+      summary: Obtener todos los usuarios seguidos por un usuario
+      tags:
+        - Following
+      operationId: getFollowedUsers
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuarios seguidos obtenidos con éxito
+        '404':
+          description: No se encontraron usuarios que sigas
+  /unfollow/{followerUserId}/{followedUserId}:
+    delete:
+      summary: Eliminar un seguimiento
+      tags:
+        - Following
+      operationId: deleteFollowing
+      parameters:
+        - name: followerUserId
+          in: path
+          required: true
+          description: ID del usuario que quiere dejar de seguir
+          schema:
+            type: string
+        - name: followedUserId
+          in: path
+          required: true
+          description: ID del usuario que se deja de seguir
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Seguimiento eliminado con éxito
+        '404':
+          description: No se encontró el seguimiento
 components:
   schemas:
     Example:

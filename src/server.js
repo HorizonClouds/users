@@ -7,6 +7,8 @@ import apiRouter from './routes/userRoute.js'; // Import API routes
 import apiRouterExample from './routes/exampleRoute.js'; // Import API routes
 import apiRouterLoginHistory from './routes/logInRoute.js'; // Import API routes
 import apiRouterPassword from './routes/passwordRecoveryRequestRoute.js'; // Import API routes
+import apiRouterFollowing from './routes/followingRoute.js'; // Import API routes
+import apiRouterFriendRequest from './routes/friendRequestRoute.js'; // Import API routes
 import dotenv from 'dotenv'; // Import dotenv for environment variables
 import standardizedResponse from './middlewares/standardResponse.js'; // Import custom response middleware
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -25,6 +27,8 @@ app.use('/api', apiRouter); // Use API routes
 app.use('/api', apiRouterExample); // Use API routes
 app.use('/api', apiRouterLoginHistory); // Use API routes
 app.use('/api', apiRouterPassword); // Use API routes
+app.use('/api', apiRouterFollowing); // Use API routes
+app.use('/api', apiRouterFriendRequest); // Use API routes
 
 app.get('/', (req, res) => {
   // Redirect to API documentation
