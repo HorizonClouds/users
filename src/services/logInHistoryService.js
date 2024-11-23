@@ -1,9 +1,14 @@
 import LoginHistory from '../models/loginHistoryModel.js'; // Importar el modelo LoginHistory
+import usersService from './userService.js';
 import { NotFoundError } from '../utils/customErrors.js'; // Importar errores personalizados
 
 // Crear un nuevo registro de inicio de sesión
 export const createLoginHistory = async (data) => {
   try {
+    const userModel = await usersService.getUsersById(data.userId);
+    if (!userModel) {
+      throw new NotFoundError('User not found');
+    }
     const loginHistory = new LoginHistory({
       userId: data.userId,
       loginDate: data.loginDate || Date.now(), // Si no se proporciona loginDate, se usa la fecha actual
@@ -22,7 +27,7 @@ export const createLoginHistory = async (data) => {
 export const getAllLoginHistory = async () => {
   try {
     // Obtener todos los registros de LoginHistory y popular los campos de 'userId'
-    const loginHistory = await LoginHistory.find().populate('userId', 'name email');
+    const loginHistory = await LoginHistory.find({});
     return loginHistory; // Devolver todos los registros de loginHistory
   } catch (error) {
     throw new Error('An error occurred while retrieving login history');
@@ -32,9 +37,12 @@ export const getAllLoginHistory = async () => {
 // Obtener un registro de inicio de sesión por ID
 export const getLoginHistoryById = async (id) => {
   try {
+    const userModel = await usersService.getUsersById(data.userId);
+    if (!userModel) {
+      throw new NotFoundError('User not found');
+    }
     // Buscar el registro de LoginHistory por su ID
-    const loginHistory = await LoginHistory.findById(id).populate('userId', 'name email');
-
+    const loginHistory = await LoginHistory.findOne({ userId: id });
     // Si no se encuentra el registro, lanzar un error
     if (!loginHistory) {
       throw new NotFoundError('Login history not found');
@@ -62,3 +70,11 @@ export const deleteLoginHistory = async (id) => {
     throw error; // Propagar el error si ocurre alguno
   }
 };
+
+export default {
+  createLoginHistory,
+  getAllLoginHistory,
+  getLoginHistoryById,
+  deleteLoginHistory,
+};
+
