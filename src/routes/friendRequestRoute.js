@@ -11,18 +11,18 @@ import { friendRequestStatusValidator } from '../middlewares/friendRequestStatus
 const router = express.Router();
 
 // Ruta para crear una nueva solicitud de amistad
-router.post('/friend-request', createFriendRequest);
+router.post('/v1/friend-request', createFriendRequest);
 
 // Ruta para aceptar una solicitud de amistad (verificación del estado de la solicitud)
-router.put('/friend-request/accept/:requestId', friendRequestStatusValidator, acceptFriendRequest);
+router.put('/v1/friend-request/accept/:requestId', friendRequestStatusValidator, acceptFriendRequest);
 
 // Ruta para rechazar una solicitud de amistad (verificación del estado de la solicitud)
-router.put('/friend-request/reject/:requestId', friendRequestStatusValidator, rejectFriendRequest);
+router.put('/v1/friend-request/reject/:requestId', friendRequestStatusValidator, rejectFriendRequest);
 
 // Ruta para obtener todas las solicitudes de amistad de un usuario
-router.get('/friend-requests/:userId', getFriendRequests);
+router.get('/v1/friend-requests/:userId', getFriendRequests);
 
 // Ruta para eliminar una solicitud de amistad
-router.delete('/friend-request/:requestId', deleteFriendRequest);
+router.delete('/v1/friend-request/:requestId', deleteFriendRequest);
 
 export default router;

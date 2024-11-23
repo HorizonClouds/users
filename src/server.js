@@ -4,6 +4,8 @@ import express from 'express'; // Import Express framework
 import mongoose from 'mongoose'; // Import Mongoose for MongoDB
 import { swaggerSetup } from './swagger.js'; // Import Swagger setup
 import apiRouter from './routes/exampleRoute.js'; // Import API routes
+import apiRouterFollowing from './routes/followingRoute.js'; // Import API routes
+import apiRouterFriendRequest from './routes/friendRequestRoute.js'; // Import API routes
 import dotenv from 'dotenv'; // Import dotenv for environment variables
 import standardizedResponse from './middlewares/standardResponse.js'; // Import custom response middleware
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -19,6 +21,8 @@ app.use(standardizedResponse); // Use custom response middleware
 
 // Routes
 app.use('/api', apiRouter); // Use API routes
+app.use('/api', apiRouterFollowing); // Use API routes
+app.use('/api', apiRouterFriendRequest); // Use API routes
 
 app.get('/', (req, res) => {
   // Redirect to API documentation
