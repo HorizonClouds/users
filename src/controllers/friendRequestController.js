@@ -1,175 +1,86 @@
-import FriendRequestModel from '../models/friendRequestModel.js';
-import { ValidationError } from '../utils/customErrors.js';
+import FriendRequestService from '../services/friendRequestService.js';
 
-// Función para eliminar campos específicos de documentos MongoDB
-const removeMongoFields = (data) => {
-  if (Array.isArray(data)) {
-    return data.map((item) => {
-      const { __v, ...rest } = item.toObject();
-      return rest;
-    });
-  } else {
-    const { __v, ...rest } = data.toObject();
-    return rest;
-  }
-};
-
-// Crear una nueva solicitud de amistad
-export const createFriendRequest = async (req, res, next) => {
+// Función para crear una solicitud de amistad
+export const createFriendRequest = async (req, res) => {
   try {
-    const { userId, recipientUserId } = req.body;
-
-    // Validar que los IDs estén presentes
-    if (!userId || !recipientUserId) {
-      throw new ValidationError('Ambos IDs de usuario son requeridos', [
-        { field: 'userId', msg: 'Este campo es obligatorio' },
-        { field: 'recipientUserId', msg: 'Este campo es obligatorio' },
-      ]);
-    }
-
-    // Comprobar si ya existe una solicitud pendiente entre los usuarios
-    const existingRequest = await FriendRequestModel.findOne({
-      userId,
-      recipientUserId,
-      friendRequestStatus: 'pending',
-    });
-
-    if (existingRequest) {
-      return res.status(400).json({
-        success: false,
-        message: 'Ya existe una solicitud pendiente entre estos usuarios',
-      });
-    }
-
-    // Crear una nueva solicitud de amistad
-    const newRequest = new FriendRequestModel({
-      userId,
-      recipientUserId,
-      friendRequestStatus: 'pending',
-    });
-
-    await newRequest.save();
-
+    const friendRequest = await FriendRequestService.createFriendRequest(req.body);
     res.status(201).json({
-      success: true,
-      message: 'Solicitud de amistad enviada con éxito',
-      data: removeMongoFields(newRequest),
+      status: 'success',
+      message: 'Solicitud de amistad creada correctamente',
+      data: friendRequest,
     });
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      status: 'error',
+      message: error.message,
+    });
   }
 };
 
-// Aceptar una solicitud de amistad
-export const acceptFriendRequest = async (req, res, next) => {
+// Función para aceptar una solicitud de amistad
+export const acceptFriendRequest = async (req, res) => {
   try {
-    const { requestId } = req.params;
-
-    // Buscar la solicitud de amistad
-    const friendRequest = await FriendRequestModel.findById(requestId);
-
-    if (!friendRequest) {
-      return res.status(404).json({
-        success: false,
-        message: 'Solicitud de amistad no encontrada',
-      });
-    }
-
-    // Cambiar el estado de la solicitud a 'accepted'
-    friendRequest.friendRequestStatus = 'accepted';
-    await friendRequest.save();
-
+    const updatedRequest = await FriendRequestService.updateFriendRequestStatus(req.params.requestId, 'accepted');
     res.status(200).json({
-      success: true,
-      message: 'Solicitud de amistad aceptada con éxito',
-      data: removeMongoFields(friendRequest),
+      status: 'success',
+      message: 'Solicitud de amistad aceptada correctamente',
+      data: updatedRequest,
     });
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      status: 'error',
+      message: error.message,
+    });
   }
 };
 
-// Rechazar una solicitud de amistad
-export const rejectFriendRequest = async (req, res, next) => {
+// Función para rechazar una solicitud de amistad
+export const rejectFriendRequest = async (req, res) => {
   try {
-    const { requestId } = req.params;
-
-    // Buscar la solicitud de amistad
-    const friendRequest = await FriendRequestModel.findById(requestId);
-
-    if (!friendRequest) {
-      return res.status(404).json({
-        success: false,
-        message: 'Solicitud de amistad no encontrada',
-      });
-    }
-
-    // Cambiar el estado de la solicitud a 'rejected'
-    friendRequest.friendRequestStatus = 'rejected';
-    await friendRequest.save();
-
+    const updatedRequest = await FriendRequestService.updateFriendRequestStatus(req.params.requestId, 'rejected');
     res.status(200).json({
-      success: true,
-      message: 'Solicitud de amistad rechazada con éxito',
-      data: removeMongoFields(friendRequest),
+      status: 'success',
+      message: 'Solicitud de amistad rechazada correctamente',
+      data: updatedRequest,
     });
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      status: 'error',
+      message: error.message,
+    });
   }
 };
 
-// Obtener todas las solicitudes de amistad de un usuario
-export const getFriendRequests = async (req, res, next) => {
+// Función para obtener todas las solicitudes de amistad de un usuario
+export const getFriendRequests = async (req, res) => {
   try {
-    const { userId } = req.params;
-
-    // Obtener las solicitudes pendientes o aceptadas para un usuario
-    const requests = await FriendRequestModel.find({
-      $or: [{ userId }, { recipientUserId: userId }],
-      friendRequestStatus: { $in: ['pending', 'accepted'] },
-    });
-
-    if (!requests.length) {
-      return res.status(404).json({
-        success: false,
-        message: 'No hay solicitudes de amistad para este usuario',
-      });
-    }
-
+    const friendRequests = await FriendRequestService.getFriendRequests(req.params.userId);
     res.status(200).json({
-      success: true,
-      message: 'Solicitudes de amistad obtenidas con éxito',
-      data: removeMongoFields(requests),
+      status: 'success',
+      message: 'Solicitudes de amistad obtenidas correctamente',
+      data: friendRequests,
     });
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      status: 'error',
+      message: error.message,
+    });
   }
 };
 
-// Eliminar una solicitud de amistad
-export const deleteFriendRequest = async (req, res, next) => {
+// Función para eliminar una solicitud de amistad
+export const deleteFriendRequest = async (req, res) => {
   try {
-    const { requestId } = req.params;
-
-    // Buscar y eliminar la solicitud de amistad
-    const deletedRequest = await FriendRequestModel.findByIdAndDelete(requestId);
-
-    if (!deletedRequest) {
-      return res.status(404).json({
-        success: false,
-        message: 'Solicitud de amistad no encontrada',
-      });
-    }
-
+    const deletedRequest = await FriendRequestService.deleteFriendRequest(req.params.requestId);
     res.status(200).json({
-      success: true,
-      message: 'Solicitud de amistad eliminada con éxito',
+      status: 'success',
+      message: 'Solicitud de amistad eliminada correctamente',
+      data: deletedRequest,
     });
   } catch (error) {
-    next(error);
+    res.status(400).json({
+      status: 'error',
+      message: error.message,
+    });
   }
-
-  
 };
-
-

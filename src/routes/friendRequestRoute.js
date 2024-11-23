@@ -4,19 +4,19 @@ import {
   acceptFriendRequest,
   rejectFriendRequest,
   getFriendRequests,
-  deleteFriendRequest,
+  deleteFriendRequest, // Asegúrate de que esté importado correctamente
 } from '../controllers/friendRequestController.js';
-import { friendRequestStatusValidator } from '../middlewares/friendRequestStatusValidator.js'; // Middleware para verificar el estado de la solicitud
+import { friendRequestStatusValidator } from '../middlewares/friendRequestStatusValidator.js';
 
 const router = express.Router();
 
 // Ruta para crear una nueva solicitud de amistad
 router.post('/v1/friend-request', createFriendRequest);
 
-// Ruta para aceptar una solicitud de amistad (verificación del estado de la solicitud)
+// Ruta para aceptar una solicitud de amistad
 router.put('/v1/friend-request/accept/:requestId', friendRequestStatusValidator, acceptFriendRequest);
 
-// Ruta para rechazar una solicitud de amistad (verificación del estado de la solicitud)
+// Ruta para rechazar una solicitud de amistad
 router.put('/v1/friend-request/reject/:requestId', friendRequestStatusValidator, rejectFriendRequest);
 
 // Ruta para obtener todas las solicitudes de amistad de un usuario
