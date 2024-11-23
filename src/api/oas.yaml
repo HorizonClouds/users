@@ -211,6 +211,457 @@ paths:
                   timestamp:
                     type: string
                     example: '2023-10-01T12:00:00.000Z'
+  /users:
+    get:
+      summary: Obtener todos los usuarios
+      tags:
+        - Usuario
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Success!
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                  appCode:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+    post:
+      summary: Crear un nuevo usuario
+      tags:
+        - Usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '201':
+          description: Usuario creado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Usuario creado correctamente
+                  data:
+                    $ref: '#/components/schemas/User'
+                  appCode:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+
+  /users/{id}:
+    get:
+      summary: Obtener un usuario específico por ID
+      tags:
+        - Usuario
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del usuario a obtener
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usuario solicitado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Success!
+                  data:
+                    $ref: '#/components/schemas/User'
+                  appCode:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Usuario no encontrado
+                  appCode:
+                    type: string
+                    example: UNKNOWN_ERROR
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+    put:
+      summary: Actualizar un usuario existente por ID
+      tags:
+        - Usuario
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del usuario a actualizar
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: El usuario actualizado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Usuario actualizado correctamente
+                  data:
+                    $ref: '#/components/schemas/User'
+                  appCode:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Usuario no encontrado
+                  appCode:
+                    type: string
+                    example: UNKNOWN_ERROR
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+    delete:
+      summary: Eliminar un usuario por ID
+      tags:
+        - Usuario
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: ID del usuario a eliminar
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Usuario eliminado con éxito
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Usuario no encontrado
+                  appCode:
+                    type: string
+                    example: UNKNOWN_ERROR
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+  /loginHistory:
+    get:
+      summary: Obtener todo el historial de inicio de sesión
+      tags:
+        - LoginHistory
+      responses:
+        '200':
+          description: Login History
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Success!
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/LoginHistory'
+                  appCode:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error retrieving login history
+                  appCode:
+                    type: string
+                    example: INTERNAL_SERVER_ERROR
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+
+    post:
+      summary: Registrar un intento de inicio de sesión
+      tags:
+        - LoginHistory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginHistoryRequest'
+      responses:
+        '201':
+          description: Intento de inicio de sesión registrado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Login attempt recorded successfully
+                  appCode:
+                    type: string
+                    example: CREATED
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+        '400':
+          description: Error en los datos de la solicitud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Invalid request data
+                  appCode:
+                    type: string
+                    example: BAD_REQUEST
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error recording login attempt
+                  appCode:
+                    type: string
+                    example: INTERNAL_SERVER_ERROR
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+
+  /login-history/{userId}:
+    get:
+      summary: Obtener el historial de inicio de sesión de un usuario específico
+      tags:
+        - LoginHistory
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          description: ID del usuario cuyo historial de inicio de sesión se desea obtener
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Historial de inicio de sesión del usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Login history for user retrieved successfully
+                  data:
+                    $ref: '#/components/schemas/LoginHistoryList'
+                  appCode:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: User not found
+                  appCode:
+                    type: string
+                    example: NOT_FOUND
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+        '500':
+          description: Error interno del servidor
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Error retrieving login history for user
+                  appCode:
+                    type: string
+                    example: INTERNAL_SERVER_ERROR
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
+  /password-recovery-request:
+    post:
+      summary: Solicitar la recuperación de contraseña
+      tags:
+        - Password Recovery
+      operationId: createPasswordRecoveryRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Correo electrónico del usuario para el cual se solicita la recuperación
+                  example: "user@example.com"
+      responses:
+        '201':
+          description: Solicitud de recuperación de contraseña creada con éxito
+        '400':
+          description: Error de validación (por ejemplo, si el correo no está registrado)
+        '404':
+          description: No se encuentra el correo electrónico registrado
+  /password-recovery-request/{recoveryToken}:
+    put:
+      summary: Validar y restablecer la contraseña utilizando un token de recuperación
+      tags:
+        - Password Recovery
+      operationId: resetPassword
+      parameters:
+        - name: recoveryToken
+          in: path
+          required: true
+          description: Token de recuperación para verificar la solicitud
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  description: Nueva contraseña para el usuario
+                  example: "NewSecurePassword123!"
+      responses:
+        '200':
+          description: Contraseña restablecida con éxito
+        '400':
+          description: Error de validación o contraseña no segura
+        '404':
+          description: Token de recuperación no válido o expirado
 
   /friend-request:
     post:
@@ -433,3 +884,98 @@ components:
       required:
         - name
         - value
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        photo:
+          type: string
+        biography:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    NewUser:
+      type: object
+      properties:
+        name:
+          type: string
+        photo:
+          type: string
+        biography:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    LoginHistory:
+      type: object
+      properties:
+        userId:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        ipAddress:
+          type: string
+        success:
+          type: boolean
+        failureReason:
+          type: string
+      required:
+        - userId
+        - timestamp
+        - success
+
+    LoginHistoryRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+        ipAddress:
+          type: string
+        success:
+          type: boolean
+        failureReason:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - userId
+        - ipAddress
+        - success
+        - timestamp
+
+    LoginHistoryList:
+      type: array
+      items:
+        $ref: '#/components/schemas/LoginHistory'
+
+    Error:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
+        appCode:
+          type: string
+        timestamp:
+          type: string
+      required:
+        - status
+        - message
+        - appCode
+        - timestamp
