@@ -211,6 +211,61 @@ paths:
                   timestamp:
                     type: string
                     example: '2023-10-01T12:00:00.000Z'
+  /password-recovery-request:
+    post:
+      summary: Solicitar la recuperación de contraseña
+      tags:
+        - Password Recovery
+      operationId: createPasswordRecoveryRequest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: Correo electrónico del usuario para el cual se solicita la recuperación
+                  example: "user@example.com"
+      responses:
+        '201':
+          description: Solicitud de recuperación de contraseña creada con éxito
+        '400':
+          description: Error de validación (por ejemplo, si el correo no está registrado)
+        '404':
+          description: No se encuentra el correo electrónico registrado
+  /password-recovery-request/{recoveryToken}:
+    put:
+      summary: Validar y restablecer la contraseña utilizando un token de recuperación
+      tags:
+        - Password Recovery
+      operationId: resetPassword
+      parameters:
+        - name: recoveryToken
+          in: path
+          required: true
+          description: Token de recuperación para verificar la solicitud
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newPassword:
+                  type: string
+                  description: Nueva contraseña para el usuario
+                  example: "NewSecurePassword123!"
+      responses:
+        '200':
+          description: Contraseña restablecida con éxito
+        '400':
+          description: Error de validación o contraseña no segura
+        '404':
+          description: Token de recuperación no válido o expirado
 components:
   schemas:
     Example:

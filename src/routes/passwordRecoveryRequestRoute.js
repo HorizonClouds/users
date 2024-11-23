@@ -1,18 +1,12 @@
 import express from 'express';
-import * as exampleController from '../controllers/exampleController.js';
-import { validateExample } from '../middlewares/exampleValidator.js';
+import * as passwordRecovery from '../controllers/passwordRecoveryRequestController.js';
+import { validateRecoveryToken} from '../middlewares/recoveryTokenValidator.js';
+import { passwordRecoveryRequestValidator } from '../middlewares/passwordRecoveryRequestValidator.js';
 
 const router = express.Router();
 
 // Define routes
-router.get('/v1/examples', exampleController.getAllExamples);
-router.post('/v1/examples', validateExample, exampleController.createExample);
-router.get('/v1/examples/:id', exampleController.getExampleById);
-router.put(
-  '/v1/examples/:id',
-  validateExample,
-  exampleController.updateExample
-);
-router.delete('/v1/examples/:id', exampleController.deleteExample);
+router.post('/v1/password-recovery-request',passwordRecoveryRequestValidator, passwordRecovery.createPasswordRecoveryRequest);
+router.put('/v1/password-recovery-request/:recoveryToken',validateRecoveryToken,passwordRecovery.validateRecoveryToken);
 
 export default router;
