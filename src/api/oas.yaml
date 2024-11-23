@@ -535,7 +535,7 @@ paths:
                     type: string
                     example: '2023-10-01T12:00:00.000Z'
 
-  /login-history/{userId}:
+  /loginhistory/{userId}:
     get:
       summary: Obtener el historial de inicio de sesión de un usuario específico
       tags:
@@ -942,20 +942,8 @@ components:
       properties:
         userId:
           type: string
-        ipAddress:
-          type: string
-        success:
-          type: boolean
-        failureReason:
-          type: string
-        timestamp:
-          type: string
-          format: date-time
       required:
         - userId
-        - ipAddress
-        - success
-        - timestamp
 
     LoginHistoryList:
       type: array
