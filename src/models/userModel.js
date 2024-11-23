@@ -22,7 +22,7 @@ const userModelSchema = new mongoose.Schema({
     type : String,
     required : [true, 'Email is required'],
     trim : true,
-    unique: true, // Garantiza que el correo sea único
+    unique: true, // Garantiza que el correo sea únic
     lowercase: true, // Almacena siempre en minúsculas
   },
   password : {
