@@ -5,7 +5,7 @@ import {
   getUsersById,
   updateUsers,
   deleteUsers,
-} from '../controllers/exampleController.js';
+} from '../controllers/userController.js';
 import { userValidator } from '../middlewares/userValidator.js';
 
 const router = express.Router();

@@ -27,7 +27,7 @@ export const createUser = async (req, res, next) => {
     const newExample = await usersService.createUser(req.body);
     res.sendSuccess(
       removeMongoFields(newExample),
-      'Example created successfully',
+      'User created successfully',
       201
     );
   } catch (error) {
@@ -35,7 +35,7 @@ export const createUser = async (req, res, next) => {
       res.sendError(new ValidationError('Validation failed', error.errors));
     } else {
       res.sendError(
-        new ValidationError('An error occurred while creating the example', [
+        new ValidationError('An error occurred while creating the user', [
           { msg: error.message },
         ])
       );
@@ -46,7 +46,7 @@ export const createUser = async (req, res, next) => {
 export const getUsersById = async (req, res, next) => {
   try {
     const example = await usersService.getUsersById(req.params.id);
-    if (!example) throw new NotFoundError('Example not found');
+    if (!example) throw new NotFoundError('User not found');
     res.sendSuccess(removeMongoFields(example));
   } catch (error) {
     res.sendError(error);
@@ -62,10 +62,10 @@ export const updateUsers = async (req, res, next) => {
       req.params.id,
       data
     );
-    if (!updatedExample) throw new NotFoundError('Example not found');
+    if (!updatedExample) throw new NotFoundError('User not found');
     res.sendSuccess(
       removeMongoFields(updatedExample),
-      'Example updated successfully'
+      'User updated successfully'
     );
   } catch (error) {
     res.sendError(error);
@@ -75,8 +75,8 @@ export const updateUsers = async (req, res, next) => {
 export const deleteUsers = async (req, res, next) => {
   try {
     const deletedExample = await usersService.deleteUsers(req.params.id);
-    if (!deletedExample) throw new NotFoundError('Example not found');
-    res.sendSuccess(null, 'Example deleted successfully', 204);
+    if (!deletedExample) throw new NotFoundError('User not found');
+    res.sendSuccess(null, 'User deleted successfully', 204);
   } catch (error) {
     res.sendError(error);
   }

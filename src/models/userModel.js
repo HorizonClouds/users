@@ -22,13 +22,13 @@ const userModelSchema = new mongoose.Schema({
     type : String,
     required : [true, 'Email is required'],
     trim : true,
+    unique: true, // Garantiza que el correo sea único
+    lowercase: true, // Almacena siempre en minúsculas
   },
   password : {
     type : String,
     required : [true, 'Password is required'],
     trim : true,
-    unique: true, // Garantiza que el correo sea único
-    lowercase: true, // Almacena siempre en minúsculas
   },
   registrationDate : {
     type : Date,
@@ -47,6 +47,6 @@ const userModelSchema = new mongoose.Schema({
 });
 
 // Create the model from the schema
-const userModel = mongoose.model('Example', exampleSchema);
+const userModel = mongoose.model('Users', userModelSchema);
 
 export default userModel; // Export the model
