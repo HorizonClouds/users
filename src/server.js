@@ -12,15 +12,17 @@ import apiRouterFriendRequest from './routes/friendRequestRoute.js'; // Import A
 import dotenv from 'dotenv'; // Import dotenv for environment variables
 import standardizedResponse from './middlewares/standardResponse.js'; // Import custom response middleware
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import cors from 'cors'; // Import cors
 
 dotenv.config(); // Load environment variables
 
 const app = express(); // Create an Express application
-const port = process.env.BACKEND_PORT || 3000; // Define port
+const port = process.env.BACKEND_PORT || 6201; // Define port
 
 // Middlewares
 app.use(express.json()); // Parse JSON bodies
 app.use(standardizedResponse); // Use custom response middleware
+app.use(cors()); // Use cors
 
 // Routes
 app.use('/api', apiRouter); // Use API routes
