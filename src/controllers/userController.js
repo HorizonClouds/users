@@ -81,3 +81,14 @@ export const deleteUsers = async (req, res, next) => {
     res.sendError(error);
   }
 };
+
+export const authenticateUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await usersService.authenticateUser(email, password);
+    if (!user) throw new ValidationError('Invalid credentials');
+    res.sendSuccess(removeMongoFields(user), 'Authentication successful');
+  } catch (error) {
+    res.sendError(error);
+  }
+};

@@ -5,6 +5,7 @@ import {
   getUsersById,
   updateUsers,
   deleteUsers,
+  authenticateUser,
 } from '../controllers/userController.js';
 import { userValidator } from '../middlewares/userValidator.js';
 
@@ -24,5 +25,8 @@ router.put('/v1/users/:id', userValidator, updateUsers);
 
 // Route to delete an example by ID
 router.delete('/v1/users/:id', deleteUsers);
+
+// Rotate to authenticate an example by email and password
+router.post('/v1/users/authenticate', authenticateUser);
 
 export default router;

@@ -1,4 +1,5 @@
 import UsersModel from '../models/userModel.js';
+import bcrypt from 'bcrypt';
 import { NotFoundError, BadRequestError } from '../utils/customErrors.js';
 
 export const getAllUsers = async () => {
@@ -57,10 +58,19 @@ export const deleteUsers = async (id) => {
   }
 };
 
+export const authenticateUser = async (email, password) => {
+  const user = await UsersModel.findOne({ email });
+  if (!user) return null;
+
+  const isPasswordCorrect = await bcrypt.compare(password, user.password);
+  return isPasswordCorrect ? user : null;
+};
+
 export default {
   getAllUsers,
   createUser,
   getUsersById,
   updateUsers,
   deleteUsers,
+  authenticateUser,
 };
