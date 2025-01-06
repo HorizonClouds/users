@@ -1,5 +1,5 @@
 import usersService from '../services/userService.js';
-import { NotFoundError, ValidationError } from '../utils/customErrors.js';
+import { NotFoundError, ValidationError, BadRequestError } from '../utils/customErrors.js';
 
 const removeMongoFields = (data) => {
   if (Array.isArray(data)) {
@@ -31,22 +31,14 @@ export const createUser = async (req, res, next) => {
       201
     );
   } catch (error) {
-    if (error.name === 'ValidationError') {
-      res.sendError(new ValidationError('Validation failed', error.errors));
-    } else {
-      res.sendError(
-        new ValidationError('An error occurred while creating the user', [
-          { msg: error.message },
-        ])
-      );
-    }
+    throw new BadRequestError('Error creating user', error);
   }
 };
 
 export const login = async (req, res, next) => {
   try {
     const { userName, password } = req.body;
-    console.log('Received login request:', userName, password);
+    logger.debug('Received login request:', userName, password);
 
     // Verificar si se proporcionaron username y password
     if (!userName || !password) {
@@ -102,3 +94,13 @@ export const deleteUsers = async (req, res, next) => {
     res.sendError(error);
   }
 };
+
+export default {
+  login,
+  getAllUsers,
+  createUser,
+  getUsersById,
+  updateUsers,
+  deleteUsers,
+};
+

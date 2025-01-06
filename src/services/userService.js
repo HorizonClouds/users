@@ -28,15 +28,15 @@ export const createUser = async (data) => {
 export const login = async (data, res) => {
   const { userName, password } = data;
   const user = await UsersModel.findOne({ name: userName, password: password });
-  console.log(user.userId);
   if (!user) {
-      console.log('Invalid credentials, user:', user);
+      logger.debug('Invalid credentials, user:', user);
       return sendError(res, {
           statusCode: 401,
           message: 'Invalid credentials',
           appCode: 'UNAUTHORIZED'
       });
   }
+  console.log(user.userId);
   const tokenPayload = {
     user: {
         user: user.name,
@@ -60,7 +60,7 @@ export const getUsersById = async (id) => {
     }
     return example;
   } catch (error) {
-    throw new NotFoundError('Error fetching user by ID', error);
+    throw new NotFoundError('user not found');
   }
 };
 
@@ -75,7 +75,7 @@ export const updateUsers = async (id, data) => {
     }
     return updatedExample;
   } catch (error) {
-    throw new NotFoundError('Error updating user', error);
+    throw new NotFoundError('user not found');
   }
 };
 
@@ -87,7 +87,7 @@ export const deleteUsers = async (id) => {
     }
     return deletedExample;
   } catch (error) {
-    throw new NotFoundError('Error deleting user', error);
+    throw new NotFoundError('user not found');
   }
 };
 
