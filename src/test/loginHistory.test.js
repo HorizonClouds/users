@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import LoginHistory from '../models/loginHistoryModel.js';
 import usersService from '../services/userService.js';
-import loginHistoryService from '../services/loginHistoryService.js';
+import loginHistoryService from '../services/logInHistoryService.js';
 import { NotFoundError } from '../utils/customErrors.js';
 import mongoose from 'mongoose';
 
