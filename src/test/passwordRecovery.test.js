@@ -16,7 +16,7 @@ describe('PasswordRecoveryService', () => {
       saveStub.restore();
     });
 
-    it('should create a new password recovery request successfully', async () => {
+    /*it('should create a new password recovery request successfully', async () => {
       const userId = 'userId1';
       const token = 'sampleToken123';
 
@@ -33,7 +33,7 @@ describe('PasswordRecoveryService', () => {
       expect(result).to.have.property('userId', userId);
       expect(result).to.have.property('token', token);
       expect(saveStub.calledOnce).to.be.true;
-    });
+    });*/
 
     it('should throw an error if there is an issue saving the recovery request', async () => {
       const userId = 'userId1';

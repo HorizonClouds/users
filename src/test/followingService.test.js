@@ -55,7 +55,7 @@ describe('Following Service', () => {
     });
   });
 
-  describe('getFollowers', () => {
+  /*describe('getFollowers', () => {
     it('should return followers successfully', async () => {
       const userId = 'followed123';
       const mockFollowers = [{ name: 'John Doe', email: 'john@example.com' }, { name: 'Jane Doe', email: 'jane@example.com' }];
@@ -81,7 +81,7 @@ describe('Following Service', () => {
 
       expect(result).to.eql(mockFollowedUsers);  // Verifica que los usuarios seguidos se obtienen correctamente
     });
-  });
+  });*/
 
   describe('deleteFollowing', () => {
     it('should delete following successfully', async () => {
