@@ -43,6 +43,27 @@ export const createUser = async (req, res, next) => {
   }
 };
 
+export const login = async (req, res, next) => {
+  try {
+    const { userName, password } = req.body;
+    console.log('Received login request:', userName, password);
+
+    // Verificar si se proporcionaron username y password
+    if (!userName || !password) {
+      return res.status(400).json({
+        status: 'error',
+        message: 'Username and password are required',
+      });
+    }
+
+    const loginResponse = usersService.login(req.body, res);
+
+  } catch (error) {
+    // Manejo de errores genéricos
+    next(error);
+  }
+}
+
 export const getUsersById = async (req, res, next) => {
   try {
     const example = await usersService.getUsersById(req.params.id);

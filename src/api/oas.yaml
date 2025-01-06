@@ -272,7 +272,39 @@ paths:
                   timestamp:
                     type: string
                     example: '2023-10-01T12:00:00.000Z'
-
+  /users/login:
+    post:
+      summary: Logear un usuario
+      tags:
+        - Usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+      responses:
+        '201':
+          description: Usuario logeado con éxito
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Usuario logeado correctamente
+                  data:
+                    $ref: '#/components/schemas/LoginResponse'
+                  appCode:
+                    type: string
+                    example: OK
+                  timestamp:
+                    type: string
+                    example: '2023-10-01T12:00:00.000Z'
   /users/{id}:
     get:
       summary: Obtener un usuario específico por ID
@@ -905,6 +937,11 @@ components:
         updatedAt:
           type: string
           format: date-time
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["user", "admin"]
     NewUser:
       type: object
       properties:
@@ -918,6 +955,46 @@ components:
           type: string
         password:
           type: string
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["user", "admin"]
+    LoginUser:
+      type: object
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        message:
+          type: string
+          example: Authentication successful
+        data:
+          type: object
+          properties:
+            token:
+              type: string
+              description: JWT token for authentication
+              example: ajljdfaskjfljghosaidfgsa...
+            payload:
+              type: object
+              properties:
+                user:
+                  type: string
+                  description: Username or user ID
+                  example: john
+                roles:
+                  type: array
+                  items:
+                    type: string
+                  example: ["user", "admin"]
     LoginHistory:
       type: object
       properties:

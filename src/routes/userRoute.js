@@ -5,6 +5,7 @@ import {
   getUsersById,
   updateUsers,
   deleteUsers,
+  login,
 } from '../controllers/userController.js';
 import { userValidator } from '../middlewares/userValidator.js';
 
@@ -15,6 +16,9 @@ router.get('/v1/users', getAllUsers);
 
 // Route to create a new example
 router.post('/v1/users', userValidator, createUser);
+
+//Route to logIn
+router.post('/v1/users/login', login)
 
 // Route to get a specific example by ID
 router.get('/v1/users/:id', getUsersById);
