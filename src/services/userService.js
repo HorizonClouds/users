@@ -1,5 +1,12 @@
 import UsersModel from '../models/userModel.js';
 import { NotFoundError, BadRequestError } from '../utils/customErrors.js';
+import express from 'express';
+import jwt from 'jsonwebtoken';
+import config from '../config.js';
+import { sendSuccess, sendError } from '../utils/standardResponse.js';
+
+const router = express.Router();
+router.use(express.json());
 
 export const getAllUsers = async () => {
   try {
@@ -16,6 +23,33 @@ export const createUser = async (data) => {
   } catch (error) {
     throw new BadRequestError('Error creating user', error);
   }
+};
+
+export const login = async (data, res) => {
+  const { userName, password } = data;
+  const user = await UsersModel.findOne({ name: userName, password: password });
+  console.log(user.userId);
+  if (!user) {
+      console.log('Invalid credentials, user:', user);
+      return sendError(res, {
+          statusCode: 401,
+          message: 'Invalid credentials',
+          appCode: 'UNAUTHORIZED'
+      });
+  }
+  const tokenPayload = {
+    user: {
+        user: user.name,
+        roles: user.roles,
+    }
+  };
+  const token = jwt.sign(tokenPayload, config.jwtSecret,{ expiresIn: '3h' });
+  console.log(`User ${user.userId} authenticated successfully`);
+  console.log(`Token: ${token}, secret: ${config.jwtSecret}, payload: ${JSON.stringify(tokenPayload)}`);
+  return sendSuccess(res, {
+      message: 'Authentication successful',
+      data: { token, secret: config.jwtSecret, expiresIn: '3h', payload: tokenPayload}
+  });
 };
 
 export const getUsersById = async (id) => {
@@ -63,4 +97,5 @@ export default {
   getUsersById,
   updateUsers,
   deleteUsers,
+  login,
 };

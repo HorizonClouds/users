@@ -44,6 +44,11 @@ const userModelSchema = new mongoose.Schema({
     enum : ['pending', 'accepted', 'rejected'],
     default : 'pending',
   },
+  roles: {
+    type: [String], // Lista de roles como un arreglo de cadenas
+    enum: ['user', 'admin', 'editor'], // Define los roles permitidos
+    default: ['user'], // Por defecto, solo tiene el rol de 'user'
+  },
 });
 
 // Create the model from the schema
