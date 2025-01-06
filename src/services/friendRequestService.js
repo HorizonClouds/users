@@ -55,7 +55,7 @@ const deleteFriendRequest = async (requestId) => {
     throw new Error('Solicitud de amistad no encontrada');
   }
 
-  await friendRequest.remove();
+  await FriendRequestModel.deleteOne({ _id: requestId });
   return friendRequest;
 };
 

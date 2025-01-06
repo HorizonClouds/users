@@ -1,4 +1,6 @@
 import followingModel from '../models/followingModel.js';
+import User from '../models/userModel.js';
+
 
 export const createFollowing = async (followerUserId, followedUserId) => {
   // Verifica si ya existe un seguimiento entre estos usuarios

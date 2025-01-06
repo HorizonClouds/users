@@ -5,21 +5,27 @@ import { NotFoundError } from '../utils/customErrors.js'; // Importar errores pe
 // Crear un nuevo registro de inicio de sesión
 export const createLoginHistory = async (data) => {
   try {
+    console.log(data);
     const userModel = await usersService.getUsersById(data.userId);
     if (!userModel) {
+      console.log('User not found');
       throw new NotFoundError('User not found');
     }
+    console.log('User found')
     const loginHistory = new LoginHistory({
       userId: data.userId,
       loginDate: data.loginDate || Date.now(), // Si no se proporciona loginDate, se usa la fecha actual
     });
 
     // Guardar el registro de loginHistory en la base de datos
+    console.log('loginHistory: ', loginHistory)
     await loginHistory.save();
+
+    console.log('loginHistory saved correctly');
 
     return loginHistory; // Devolver el registro guardado
   } catch (error) {
-    throw new Error('An error occurred while creating login history');
+    throw error;
   }
 };
 
@@ -37,7 +43,7 @@ export const getAllLoginHistory = async () => {
 // Obtener un registro de inicio de sesión por ID
 export const getLoginHistoryById = async (id) => {
   try {
-    const userModel = await usersService.getUsersById(data.userId);
+    const userModel = await usersService.getUsersById(id);
     if (!userModel) {
       throw new NotFoundError('User not found');
     }
