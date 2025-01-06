@@ -38,7 +38,7 @@ export const createUser = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { userName, password } = req.body;
-    console.log('Received login request:', userName, password);
+    logger.debug('Received login request:', userName, password);
 
     // Verificar si se proporcionaron username y password
     if (!userName || !password) {

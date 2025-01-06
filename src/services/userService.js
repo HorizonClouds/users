@@ -29,7 +29,7 @@ export const login = async (data, res) => {
   const { userName, password } = data;
   const user = await UsersModel.findOne({ name: userName, password: password });
   if (!user) {
-      console.log('Invalid credentials, user:', user);
+      logger.debug('Invalid credentials, user:', user);
       return sendError(res, {
           statusCode: 401,
           message: 'Invalid credentials',

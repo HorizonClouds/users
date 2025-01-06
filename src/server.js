@@ -13,6 +13,7 @@ import dotenv from 'dotenv'; // Import dotenv for environment variables
 import standardizedResponse from './middlewares/standardResponse.js'; // Import custom response middleware
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import cors from 'cors'; // Import cors
+import './utils/logger.js'
 
 dotenv.config(); // Load environment variables
 
