@@ -18,12 +18,18 @@ export const loginHistoryValidator = [
   // Middleware to handle validation errors
   (req, res, next) => {
     try {
+      logger.info('Validating login history request', req.body);
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        logger.info('Validation failed', errors.array());
         throw new ValidationError('Validation failed', errors.array());
       }
+
+      logger.info('Validation succeeded');
       next();
     } catch (error) {
+      logger.error('Validation error', error);
       res.status(400).json({ error: error.message, details: error.errors || [] });
     }
   },
@@ -40,12 +46,18 @@ export const loginHistoryIdValidator = [
   // Middleware to handle validation errors
   (req, res, next) => {
     try {
+      logger.info('Validating login history ID parameter', req.params.id);
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        logger.info('Validation failed', errors.array());
         throw new ValidationError('Validation failed', errors.array());
       }
+
+      logger.info('Validation succeeded');
       next();
     } catch (error) {
+      logger.error('Validation error', error);
       res.status(400).json({ error: error.message, details: error.errors || [] });
     }
   },

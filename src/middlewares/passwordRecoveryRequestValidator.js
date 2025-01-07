@@ -10,9 +10,12 @@ export const passwordRecoveryRequestValidator = (req, res, next) => {
     }),
   });
 
+  logger.info('Starting password recovery request validation', req.body);
+
   const { error } = schema.validate(req.body);
 
   if (error) {
+    logger.info('Validation error occurred', error.details);
     return res.status(400).json({
       success: false,
       message: 'Error de validación',
@@ -20,5 +23,6 @@ export const passwordRecoveryRequestValidator = (req, res, next) => {
     });
   }
 
+  logger.info('Password recovery request validated successfully');
   next();
 };

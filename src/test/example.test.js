@@ -24,7 +24,7 @@ describe('Example API', () => {
       .execute(app)
       .get('/api/v1/examples')
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res.body).to.have.property('status', responseFormat.status);
         expect(res.body).to.have.property('message', responseFormat.message);
         expect(res.body).to.have.property('appCode', responseFormat.appCode);
@@ -38,7 +38,7 @@ describe('Example API', () => {
       .execute(app)
       .get('/api/v1/examples')
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(200);
         expect(res.body).to.have.property('data').that.is.an('array');
         done();
@@ -49,7 +49,7 @@ describe('Example API', () => {
     chai.request.execute(app)
       .get('/api/v1/invalid-endpoint')
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(404);
         done();
       });
@@ -61,7 +61,7 @@ describe('Example API', () => {
       .post('/api/v1/examples')
       .send({ name: 'Test Example', value: 123 })
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(201);
         expect(res.body).to.have.property('data').that.is.an('object');
         expect(res.body.data).to.have.property('name', 'Test Example');
@@ -75,7 +75,7 @@ describe('Example API', () => {
       .post('/api/v1/examples')
       .send({ name: 'Te', value: -10 })
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(400);
         expect(res.body).to.have.property('details');
         done();
@@ -87,7 +87,7 @@ describe('Example API', () => {
       .execute(app)
       .get('/api/v1/examples')
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(200);
         expect(res.body).to.have.property('data').that.is.an('array').that.is
           .empty;
@@ -100,7 +100,7 @@ describe('Example API', () => {
     let exampleId = example._id;
 
     const res = await chai.request.execute(app).get(`/api/v1/examples/${exampleId}`);
-    if (debug) console.log(res.body);
+    if (debug) logger.info(res.body);
     expect(res).to.have.status(200);
     expect(res.body).to.have.property('data').that.is.an('object');
     expect(res.body.data).to.have.property('_id');
@@ -113,7 +113,7 @@ describe('Example API', () => {
     chai.request.execute(app)
       .get(`/api/v1/examples/${exampleId}`)
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(404);
         done();
       });
@@ -125,7 +125,7 @@ describe('Example API', () => {
       .post('/api/v1/examples')
       .send({ name: 'Test Example', value: 123 })
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(201);
         expect(res.body).to.have.property('data').that.is.an('object');
         expect(res.body.data).to.have.property('name', 'Test Example');
@@ -135,7 +135,7 @@ describe('Example API', () => {
           .execute(app)
           .get('/api/v1/examples')
           .end((err, res) => {
-            if (debug) console.log(res.body);
+            if (debug) logger.info(res.body);
             expect(res).to.have.status(200);
             expect(res.body)
               .to.have.property('data')
@@ -155,7 +155,7 @@ describe('Example API', () => {
     const res = await chai.request.execute(app)
       .put(`/api/v1/examples/${exampleId}`)
       .send({ name: 'Updated Example', value: 456 });
-    if (debug) console.log(res.body);
+    if (debug) logger.info(res.body);
     expect(res).to.have.status(200);
     expect(res.body).to.have.property('data').that.is.an('object');
     expect(res.body.data).to.have.property('name', 'Updated Example');
@@ -170,7 +170,7 @@ describe('Example API', () => {
       .put(`/api/v1/examples/${exampleId}`)
       .send({ name: 'Up', value: -20 })
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(400);
         expect(res.body).to.have.property('details');
         done();
@@ -183,7 +183,7 @@ describe('Example API', () => {
 
     const res = await chai.request.execute(app)
       .delete(`/api/v1/examples/${exampleId}`);
-    if (debug) console.log(res.body);
+    if (debug) logger.info(res.body);
     expect(res).to.have.status(204);
     //done is not needed (we are retuning the promise implicitly)
   });
@@ -192,7 +192,7 @@ describe('Example API', () => {
     chai.request.execute(app)
       .delete('/api/v1/examples/invalid-id')
       .end((err, res) => {
-        if (debug) console.log(res.body);
+        if (debug) logger.info(res.body);
         expect(res).to.have.status(404);
         done();
       });

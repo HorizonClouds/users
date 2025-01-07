@@ -76,12 +76,16 @@ export const userValidator = [
   // Middleware to handle validation errors
   (req, res, next) => {
     try {
+      logger.debug('Starting validation process for user input');
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        logger.debug('Validation failed with errors:', errors.array());
         throw new ValidationError('Validation failed', errors.array());
       }
+      logger.debug('Validation passed successfully');
       next();
     } catch (error) {
+      logger.debug(`Error in validation: ${error.message}`);
       res.status(400).json({ error: error.message, details: error.errors || [] });
     }
   },
