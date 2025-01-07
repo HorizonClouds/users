@@ -74,17 +74,20 @@ describe('Following Service', () => {
     it('should return followers successfully', async () => {
       const userId = new mongoose.Types.ObjectId();
       const mockFollowers = [
-        { followerUserId: { name: 'John Doe', email: 'john@example.com' } },
-        { followerUserId: { name: 'Jane Doe', email: 'jane@example.com' } },
+        { followerUserId: new mongoose.Types.ObjectId() },
+        { followerUserId: new mongoose.Types.ObjectId() },
       ];
 
-      findStub.callsFake(() => ({
-        populate: sinon.stub().resolves(mockFollowers),
-      }));
+      findStub.resolves(mockFollowers);  // Simulamos que find() devuelve un arreglo de documentos
 
       const result = await followingService.getFollowers(userId);
 
-      expect(result).to.eql(mockFollowers);
+      // Verificar que el resultado sea un arreglo de ObjectIds en formato de cadena
+      expect(result).to.be.an('array');
+      expect(result).to.have.lengthOf(mockFollowers.length);
+      mockFollowers.forEach((follower, index) => {
+        expect(result[index]).to.equal(follower.followerUserId.toString());
+      });
     });
   });
 
@@ -92,17 +95,20 @@ describe('Following Service', () => {
     it('should return followed users successfully', async () => {
       const userId = new mongoose.Types.ObjectId();
       const mockFollowedUsers = [
-        { followedUserId: { name: 'Alice', email: 'alice@example.com' } },
-        { followedUserId: { name: 'Bob', email: 'bob@example.com' } },
+        { followedUserId: new mongoose.Types.ObjectId() },
+        { followedUserId: new mongoose.Types.ObjectId() },
       ];
 
-      findStub.callsFake(() => ({
-        populate: sinon.stub().resolves(mockFollowedUsers),
-      }));
+      findStub.resolves(mockFollowedUsers);  // Simulamos que find() devuelve un arreglo de documentos
 
       const result = await followingService.getFollowedUsers(userId);
 
-      expect(result).to.eql(mockFollowedUsers);
+      // Verificar que el resultado sea un arreglo de ObjectIds en formato de cadena
+      expect(result).to.be.an('array');
+      expect(result).to.have.lengthOf(mockFollowedUsers.length);
+      mockFollowedUsers.forEach((followed, index) => {
+        expect(result[index]).to.equal(followed.followedUserId.toString());
+      });
     });
   });
 

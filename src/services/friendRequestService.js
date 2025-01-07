@@ -1,10 +1,25 @@
 import FriendRequestModel from '../models/friendRequestModel.js';
+import userModel from '../models/userModel.js';
 
 // Crear una solicitud de amistad
 const createFriendRequest = async (requestData) => {
-  const { userId, recipientUserId } = requestData;
+  const { userId, recipientUserId: recipientEmail } = requestData; // Renombrar recipientUserId a recipientEmail
 
-  logger.info('Creating friend request:', requestData);
+  // Buscar el usuario por email
+  const userRecipient = await userModel.findOne({
+    email: recipientEmail,
+  });
+
+  if (!userRecipient) {
+    throw new Error('Recipient user not found'); // Manejar el caso de que el usuario no exista
+  }
+
+  // Extraer el ID del usuario encontrado
+  const recipientUserId = userRecipient._id.toString(); // Convertir el ObjectId a string
+
+  logger.info('Recipient userId:', recipientUserId);
+
+  logger.info('Creating friend request:', { userId, recipientUserId });
 
   // Verificar si ya existe una solicitud de amistad pendiente entre estos dos usuarios
   const existingRequest = await FriendRequestModel.findOne({
@@ -52,7 +67,7 @@ const getFriendRequests = async (userId) => {
 
   const friendRequests = await FriendRequestModel.find({
     recipientUserId: userId,
-    friendRequestStatus: 'pending', // Agregar condición para estado pendiente
+    friendRequestStatus: 'pending', // Agregar condiciÃ³n para estado pendiente
   });
   logger.info('Friend requests found:', friendRequests);
   return friendRequests;
