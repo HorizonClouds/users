@@ -3,18 +3,18 @@ import mongoose from 'mongoose';
 // Crear un esquema para el seguimiento
 const followingSchema = new mongoose.Schema({
   followerUserId: {
-    type: mongoose.Schema.Types.ObjectId, // Referencia al _id de la colección User
-    ref: 'User', // Nombre del modelo al que se relaciona
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Users',
     required: true,
   },
   followedUserId: {
-    type: mongoose.Schema.Types.ObjectId, // Referencia al _id de la colección User
-    ref: 'User', // Nombre del modelo al que se relaciona
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Users',
     required: true,
   },
   followUpDate: {
     type: Date,
-    required: [true, 'La fecha de recuperación es requerida'],
+    required: [true, 'La fecha de seguimiento es requerida'],
     default: Date.now,
   },
 });
@@ -23,4 +23,3 @@ const followingSchema = new mongoose.Schema({
 const followingModel = mongoose.model('Following', followingSchema);
 
 export default followingModel;
-
