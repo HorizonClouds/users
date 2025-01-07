@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
+import mongoose from 'mongoose';
 import PasswordRecoveryModel from '../models/passwordRecoveryRequestModel.js';
 import * as passwordRecoveryService from '../services/passwordRecoveryService.js';
 
 describe('PasswordRecoveryService', () => {
-
   describe('createPasswordRecoveryRequest', () => {
     let saveStub;
 
@@ -16,12 +16,12 @@ describe('PasswordRecoveryService', () => {
       saveStub.restore();
     });
 
-    /*it('should create a new password recovery request successfully', async () => {
-      const userId = 'userId1';
+    it('should create a new password recovery request successfully', async () => {
+      const userId = new mongoose.Types.ObjectId(); // Genera un ObjectId válido
       const token = 'sampleToken123';
 
       const mockSavedRecoveryRequest = {
-        userId,
+        userId: userId.toString(), // Convierte el ObjectId a string aquí
         token,
         save: saveStub.resolves(),
       };
@@ -29,14 +29,15 @@ describe('PasswordRecoveryService', () => {
       saveStub.resolves(mockSavedRecoveryRequest);
 
       const result = await passwordRecoveryService.createPasswordRecoveryRequest(userId, token);
-      
-      expect(result).to.have.property('userId', userId);
-      expect(result).to.have.property('token', token);
+
+      // Convierte el userId a string para la comparación
+      expect(result.userId.toString()).to.equal(userId.toString());
+      expect(result.token).to.equal(token);
       expect(saveStub.calledOnce).to.be.true;
-    });*/
+    });
 
     it('should throw an error if there is an issue saving the recovery request', async () => {
-      const userId = 'userId1';
+      const userId = new mongoose.Types.ObjectId();
       const token = 'sampleToken123';
 
       saveStub.rejects(new Error('Database error'));
@@ -70,7 +71,7 @@ describe('PasswordRecoveryService', () => {
       findOneStub.resolves(mockRecoveryRequest);
 
       const result = await passwordRecoveryService.validatePasswordRecoveryToken(token);
-      
+
       expect(result).to.be.true;
       expect(findOneStub.calledOnceWith({ token })).to.be.true;
     });
@@ -81,7 +82,7 @@ describe('PasswordRecoveryService', () => {
       findOneStub.resolves(null); // Simula que no se encuentra el token
 
       const result = await passwordRecoveryService.validatePasswordRecoveryToken(token);
-      
+
       expect(result).to.be.false;
       expect(findOneStub.calledOnceWith({ token })).to.be.true;
     });
@@ -96,7 +97,7 @@ describe('PasswordRecoveryService', () => {
       findOneStub.resolves(mockRecoveryRequest);
 
       const result = await passwordRecoveryService.validatePasswordRecoveryToken(token);
-      
+
       expect(result).to.be.false;
       expect(findOneStub.calledOnceWith({ token })).to.be.true;
     });
