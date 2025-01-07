@@ -47,6 +47,7 @@ export const login = async (data, res) => {
   const tokenPayload = {
     user: {
       user: user.name,
+      id: user._id,
       roles: user.roles,
     }
   };

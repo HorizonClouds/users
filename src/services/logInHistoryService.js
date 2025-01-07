@@ -60,7 +60,7 @@ export const getLoginHistoryById = async (id) => {
     }
 
     // Buscar el registro de LoginHistory por su ID
-    const loginHistory = await LoginHistory.findOne({ userId: id });
+    const loginHistory = await LoginHistory.find({ userId: id });
     // Si no se encuentra el registro, lanzar un error
     if (!loginHistory) {
       logger.info('Login history not found');
