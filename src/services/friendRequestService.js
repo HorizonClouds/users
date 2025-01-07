@@ -51,9 +51,9 @@ const getFriendRequests = async (userId) => {
   logger.info('Getting friend requests for user:', userId);
 
   const friendRequests = await FriendRequestModel.find({
-    $or: [{ userId }, { recipientUserId: userId }],
+    recipientUserId: userId,
+    friendRequestStatus: 'pending', // Agregar condición para estado pendiente
   });
-
   logger.info('Friend requests found:', friendRequests);
   return friendRequests;
 };
