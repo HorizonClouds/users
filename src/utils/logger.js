@@ -22,7 +22,7 @@ if (kafkaEnabled) {
   await connectKafka();
 }
 
-console.log(`Logger initialized for ${CLIENT_ID}; with variables: ${kafkaEnabled}, ${logLevel}, ${kafkaBroker}, ${kafkaTopic}`);
+logger.debug(`Logger initialized for ${CLIENT_ID}; with variables: ${kafkaEnabled}, ${logLevel}, ${kafkaBroker}, ${kafkaTopic}`);
 
 const logMessage = (level, message) => {
   const timestamp = new Date().toISOString();
@@ -41,7 +41,7 @@ const sendLogToKafka = async (formattedMessage) => {
 const info = async (message) => {
   if (logLevel === 'INFO' || logLevel === 'DEBUG') {
     const formattedMessage = logMessage('INFO', message);
-    console.log(formattedMessage);
+    logger.debug(formattedMessage);
     await sendLogToKafka(formattedMessage);
   }
 };
@@ -49,7 +49,7 @@ const info = async (message) => {
 const debug = async (message) => {
   if (logLevel === 'DEBUG') {
     const formattedMessage = logMessage('DEBUG', message);
-    console.log(formattedMessage);
+    logger.debug(formattedMessage);
     await sendLogToKafka(formattedMessage);
   }
 };

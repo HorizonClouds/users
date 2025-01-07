@@ -48,13 +48,13 @@ if (process.env.NODE_ENV === 'test') {
   const mongod = new MongoMemoryServer(); // Fake MongoDB for testing
   await mongod.start();
   mongoURI = mongod.getUri();
-  console.log(mongoURI);
+  logger.debug(mongoURI);
 }
 
 mongoose
   .connect(mongoURI)
   .then(() => {
-    console.log('Connected to MongoDB');
+    logger.debug('Connected to MongoDB');
   })
   .catch((error) => {
     console.error('Error connecting to MongoDB:', error.message);
@@ -62,8 +62,8 @@ mongoose
 
 // Start server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-  console.log(
+  logger.debug(`Server is running on http://localhost:${port}`);
+  logger.debug(
     `API documentation is available at http://localhost:${port}/api-docs`
   );
 });

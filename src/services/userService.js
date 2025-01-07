@@ -36,7 +36,7 @@ export const login = async (data, res) => {
           appCode: 'UNAUTHORIZED'
       });
   }
-  console.log(user.userId);
+  logger.debug(user.userId);
   const tokenPayload = {
     user: {
         user: user.name,
@@ -44,8 +44,8 @@ export const login = async (data, res) => {
     }
   };
   const token = jwt.sign(tokenPayload, config.jwtSecret,{ expiresIn: '3h' });
-  console.log(`User ${user.userId} authenticated successfully`);
-  console.log(`Token: ${token}, secret: ${config.jwtSecret}, payload: ${JSON.stringify(tokenPayload)}`);
+  logger.debug(`User ${user.userId} authenticated successfully`);
+  logger.debug(`Token: ${token}, secret: ${config.jwtSecret}, payload: ${JSON.stringify(tokenPayload)}`);
   return sendSuccess(res, {
       message: 'Authentication successful',
       data: { token, secret: config.jwtSecret, expiresIn: '3h', payload: tokenPayload}
