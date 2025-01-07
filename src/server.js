@@ -1,5 +1,6 @@
 // server.js
 
+import './utils/logger.js'
 import express from 'express'; // Import Express framework
 import mongoose from 'mongoose'; // Import Mongoose for MongoDB
 import { swaggerSetup } from './swagger.js'; // Import Swagger setup
@@ -13,7 +14,7 @@ import dotenv from 'dotenv'; // Import dotenv for environment variables
 import standardizedResponse from './middlewares/standardResponse.js'; // Import custom response middleware
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import cors from 'cors'; // Import cors
-import './utils/logger.js'
+
 
 dotenv.config(); // Load environment variables
 
@@ -48,22 +49,22 @@ if (process.env.NODE_ENV === 'test') {
   const mongod = new MongoMemoryServer(); // Fake MongoDB for testing
   await mongod.start();
   mongoURI = mongod.getUri();
-  logger.debug(mongoURI);
+  logger.info(mongoURI);
 }
 
 mongoose
   .connect(mongoURI)
   .then(() => {
-    logger.debug('Connected to MongoDB');
+    logger.info('Connected to MongoDB');
   })
   .catch((error) => {
-    console.error('Error connecting to MongoDB:', error.message);
+    logger.info('Error connecting to MongoDB:', error.message);
   });
 
 // Start server
 app.listen(port, () => {
-  logger.debug(`Server is running on http://localhost:${port}`);
-  logger.debug(
+  logger.info(`Server is running on http://localhost:${port}`);
+  logger.info(
     `API documentation is available at http://localhost:${port}/api-docs`
   );
 });

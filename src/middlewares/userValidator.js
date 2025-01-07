@@ -1,6 +1,5 @@
 import { body, validationResult } from 'express-validator';
 import { ValidationError } from '../utils/customErrors.js';
-import logger from '../utils/logger.js'; // Asegúrate de que esta importación sea correcta
 
 export const userValidator = [
   // Validate 'name' field

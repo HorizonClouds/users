@@ -1,17 +1,17 @@
+// tests/followingService.test.js
 import { expect } from 'chai';
 import sinon from 'sinon';
 import * as followingService from '../services/followingService.js';
 import followingModel from '../models/followingModel.js';
+import mongoose from 'mongoose';
 
 describe('Following Service', () => {
-  // Stubs para los métodos de followingModel
   let findOneStub;
   let findStub;
   let createStub;
   let findOneAndDeleteStub;
 
   beforeEach(() => {
-    // Inicializa los stubs
     findOneStub = sinon.stub(followingModel, 'findOne');
     findStub = sinon.stub(followingModel, 'find');
     createStub = sinon.stub(followingModel.prototype, 'save');
@@ -19,103 +19,130 @@ describe('Following Service', () => {
   });
 
   afterEach(() => {
-    // Restaurar los stubs después de cada prueba
     sinon.restore();
   });
 
   describe('createFollowing', () => {
     it('should create a new following successfully', async () => {
-      const followerUserId = 'follower123';
-      const followedUserId = 'followed123';
+      const followerUserId = new mongoose.Types.ObjectId();
+      const followedUserId = new mongoose.Types.ObjectId();
 
-      // Simula que no existe un seguimiento previo
-      findOneStub.resolves(null);
+      findOneStub.resolves(null); // No existe un seguimiento previo
 
-      // Simula la creación del seguimiento
-      createStub.resolves({ followerUserId, followedUserId });
+      const createdFollowing = {
+        _id: new mongoose.Types.ObjectId(),
+        followerUserId,
+        followedUserId,
+        followUpDate: new Date(),
+      };
+      createStub.resolves(createdFollowing);
 
       const result = await followingService.createFollowing(followerUserId, followedUserId);
 
-      expect(result).to.eql({ followerUserId, followedUserId }); // Verifica que el seguimiento se haya creado correctamente
+      // Verificar que los ObjectId son del tipo correcto
+      expect(result._id).to.be.a('string');
+      expect(result.followerUserId).to.be.a('string');
+      expect(result.followedUserId).to.be.a('string');
+
+      // Verificar que la fecha sea razonable
+      expect(new Date(result.followUpDate).getTime()).to.be.closeTo(new Date(createdFollowing.followUpDate).getTime(), 1000); // Permitir 1 segundo de diferencia
+
+      // También verificamos que los valores sean correctos
+      expect(result.followerUserId).to.equal(followerUserId.toString());
+      expect(result.followedUserId).to.equal(followedUserId.toString());
     });
 
     it('should throw error if following already exists', async () => {
-      const followerUserId = 'follower123';
-      const followedUserId = 'followed123';
+      const followerUserId = new mongoose.Types.ObjectId();
+      const followedUserId = new mongoose.Types.ObjectId();
 
-      // Simula que ya existe un seguimiento
-      findOneStub.resolves({ followerUserId, followedUserId });
+      findOneStub.resolves({
+        followerUserId,
+        followedUserId,
+        followUpDate: new Date(),
+      });
 
       try {
         await followingService.createFollowing(followerUserId, followedUserId);
       } catch (err) {
-        expect(err.message).to.equal('Ya sigues a este usuario'); // Verifica que el mensaje de error sea el esperado
+        expect(err.message).to.equal('Ya sigues a este usuario');
       }
     });
   });
 
   describe('getFollowers', () => {
     it('should return followers successfully', async () => {
-      const userId = 'followed123';
+      const userId = new mongoose.Types.ObjectId();
       const mockFollowers = [
         { followerUserId: { name: 'John Doe', email: 'john@example.com' } },
         { followerUserId: { name: 'Jane Doe', email: 'jane@example.com' } },
       ];
 
-      // Simula el comportamiento de .find().populate()
       findStub.callsFake(() => ({
         populate: sinon.stub().resolves(mockFollowers),
       }));
 
       const result = await followingService.getFollowers(userId);
 
-      expect(result).to.eql(mockFollowers); // Verifica que los seguidores se obtienen correctamente
+      expect(result).to.eql(mockFollowers);
     });
   });
 
   describe('getFollowedUsers', () => {
     it('should return followed users successfully', async () => {
-      const userId = 'follower123';
+      const userId = new mongoose.Types.ObjectId();
       const mockFollowedUsers = [
         { followedUserId: { name: 'Alice', email: 'alice@example.com' } },
         { followedUserId: { name: 'Bob', email: 'bob@example.com' } },
       ];
 
-      // Simula el comportamiento de .find().populate()
       findStub.callsFake(() => ({
         populate: sinon.stub().resolves(mockFollowedUsers),
       }));
 
       const result = await followingService.getFollowedUsers(userId);
 
-      expect(result).to.eql(mockFollowedUsers); // Verifica que los usuarios seguidos se obtienen correctamente
+      expect(result).to.eql(mockFollowedUsers);
     });
   });
 
   describe('deleteFollowing', () => {
     it('should delete following successfully', async () => {
-      const followerUserId = 'follower123';
-      const followedUserId = 'followed123';
+      const followerUserId = new mongoose.Types.ObjectId();
+      const followedUserId = new mongoose.Types.ObjectId();
 
-      // Simula que existe un seguimiento
-      findOneAndDeleteStub.resolves({ followerUserId, followedUserId });
+      findOneAndDeleteStub.resolves({
+        _id: new mongoose.Types.ObjectId(),
+        followerUserId,
+        followedUserId,
+        followUpDate: new Date(),
+      });
 
       const result = await followingService.deleteFollowing(followerUserId, followedUserId);
 
-      expect(result).to.eql({ followerUserId, followedUserId }); // Verifica que el seguimiento se haya eliminado correctamente
+      // Verificar que los ObjectId son del tipo correcto
+      expect(result._id).to.be.a('string');
+      expect(result.followerUserId).to.be.a('string');
+      expect(result.followedUserId).to.be.a('string');
+
+      // Verificar que la fecha sea razonable
+      expect(new Date(result.followUpDate).getTime()).to.be.closeTo(new Date().getTime(), 1000); // Permitir 1 segundo de diferencia
+
+      // También verificamos que los valores sean correctos
+      expect(result.followerUserId).to.equal(followerUserId.toString());
+      expect(result.followedUserId).to.equal(followedUserId.toString());
     });
 
     it('should throw error if following does not exist', async () => {
-      const followerUserId = 'follower123';
-      const followedUserId = 'followed123';
+      const followerUserId = new mongoose.Types.ObjectId();
+      const followedUserId = new mongoose.Types.ObjectId();
 
-      // Simula que no existe el seguimiento
       findOneAndDeleteStub.resolves(null);
 
       try {
         await followingService.deleteFollowing(followerUserId, followedUserId);
       } catch (err) {
-        expect(err.message).to.equal('El seguimiento no existe'); // Verifica que el mensaje de error sea el esperado
+        expect(err.message).to.equal('El seguimiento no existe');
       }
     });
   });

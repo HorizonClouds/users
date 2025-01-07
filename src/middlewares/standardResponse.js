@@ -1,5 +1,4 @@
 import AppError from '../utils/customErrors.js';
-import logger from '../utils/logger.js'; // Asegúrate de que esta importación sea correcta
 
 const standardResponseMiddleware = (req, res, next) => {
   // Custom success response method
@@ -9,7 +8,7 @@ const standardResponseMiddleware = (req, res, next) => {
     statusCode = 200,
     appCode = 'OK'
   ) => {
-    logger.debug(`Sending success response: ${message}, Status Code: ${statusCode}`);
+    logger.info(`Sending success response: ${message}, Status Code: ${statusCode}`);
     res.status(statusCode).json({
       status: 'success',
       message,
@@ -23,8 +22,8 @@ const standardResponseMiddleware = (req, res, next) => {
   res.sendError = (error) => {
     // Default to 400 status for unexpected errors
     if (process.env.DEBUG === 'true') {
-      console.error(error);
-      logger.debug('Error details:', error);
+      logger.info(error);
+      logger.info('Error details:', error);
     }
 
     let statusCode = error.statusCode || 400;
@@ -39,15 +38,15 @@ const standardResponseMiddleware = (req, res, next) => {
       message = error.message;
       details = error.details;
       appCode = error.appCode;
-      logger.debug(`AppError detected: ${message}, Code: ${appCode}`);
+      logger.info(`AppError detected: ${message}, Code: ${appCode}`);
     } else if (error.name === 'ValidationError') {
       statusCode = 400;
       message = 'Validation failed';
       details = error.errors;
       appCode = 'VALIDATION_ERROR';
-      logger.debug(`ValidationError: ${message}`);
+      logger.info(`ValidationError: ${message}`);
     } else {
-      logger.debug(`Unexpected error: ${message}`);
+      logger.info(`Unexpected error: ${message}`);
     }
 
     res.status(statusCode).json({

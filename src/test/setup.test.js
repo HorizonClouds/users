@@ -1,5 +1,5 @@
 process.env.NODE_ENV = 'test';
-logger.debug('Starting test setup');
+logger.info('Starting test setup');
 import ExampleModel from '../models/exampleModel.js';
 
 import { MongoMemoryServer } from 'mongodb-memory-server';

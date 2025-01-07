@@ -15,28 +15,28 @@ const removeMongoFields = (data) => {
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    logger.debug('Fetching all users...');
+    logger.info('Fetching all users...');
     const examples = await usersService.getAllUsers();
-    logger.debug(`Fetched ${examples.length} users.`);
+    logger.info(`Fetched ${examples.length} users.`);
     res.sendSuccess(removeMongoFields(examples));
   } catch (error) {
-    logger.debug(`Error fetching users: ${error.message}`);
+    logger.info(`Error fetching users: ${error.message}`);
     res.sendError(error);
   }
 };
 
 export const createUser = async (req, res, next) => {
   try {
-    logger.debug('Creating new user:', req.body);
+    logger.info('Creating new user:', req.body);
     const newExample = await usersService.createUser(req.body);
-    logger.debug('User created successfully:', newExample);
+    logger.info('User created successfully:', newExample);
     res.sendSuccess(
       removeMongoFields(newExample),
       'User created successfully',
       201
     );
   } catch (error) {
-    logger.debug(`Error creating user: ${error.message}`);
+    logger.info(`Error creating user: ${error.message}`);
     throw new BadRequestError('Error creating user', error);
   }
 };
@@ -44,11 +44,11 @@ export const createUser = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { userName, password } = req.body;
-    logger.debug('Received login request for user:', userName);
+    logger.info('Received login request for user:', userName);
 
     // Verificar si se proporcionaron username y password
     if (!userName || !password) {
-      logger.debug('Username or password missing');
+      logger.info('Username or password missing');
       return res.status(400).json({
         status: 'error',
         message: 'Username and password are required',
@@ -56,9 +56,9 @@ export const login = async (req, res, next) => {
     }
 
     const loginResponse = await usersService.login(req.body, res);
-    logger.debug('Login attempt completed', loginResponse);
+    logger.info('Login attempt completed', loginResponse);
   } catch (error) {
-    logger.debug(`Error during login: ${error.message}`);
+    logger.info(`Error during login: ${error.message}`);
     // Manejo de errores genéricos
     next(error);
   }
@@ -66,13 +66,13 @@ export const login = async (req, res, next) => {
 
 export const getUsersById = async (req, res, next) => {
   try {
-    logger.debug(`Fetching user by id: ${req.params.id}`);
+    logger.info(`Fetching user by id: ${req.params.id}`);
     const example = await usersService.getUsersById(req.params.id);
     if (!example) throw new NotFoundError('User not found');
-    logger.debug('User found:', example);
+    logger.info('User found:', example);
     res.sendSuccess(removeMongoFields(example));
   } catch (error) {
-    logger.debug(`Error fetching user by id: ${error.message}`);
+    logger.info(`Error fetching user by id: ${error.message}`);
     res.sendError(error);
   }
 };
@@ -82,33 +82,33 @@ export const updateUsers = async (req, res, next) => {
     let data = req.body;
     // remove _id field from data
     delete data._id;
-    logger.debug('Updating user:', req.params.id, data);
+    logger.info('Updating user:', req.params.id, data);
 
     const updatedExample = await usersService.updateUsers(
       req.params.id,
       data
     );
     if (!updatedExample) throw new NotFoundError('User not found');
-    logger.debug('User updated successfully:', updatedExample);
+    logger.info('User updated successfully:', updatedExample);
     res.sendSuccess(
       removeMongoFields(updatedExample),
       'User updated successfully'
     );
   } catch (error) {
-    logger.debug(`Error updating user: ${error.message}`);
+    logger.info(`Error updating user: ${error.message}`);
     res.sendError(error);
   }
 };
 
 export const deleteUsers = async (req, res, next) => {
   try {
-    logger.debug(`Deleting user by id: ${req.params.id}`);
+    logger.info(`Deleting user by id: ${req.params.id}`);
     const deletedExample = await usersService.deleteUsers(req.params.id);
     if (!deletedExample) throw new NotFoundError('User not found');
-    logger.debug('User deleted successfully');
+    logger.info('User deleted successfully');
     res.sendSuccess(null, 'User deleted successfully', 204);
   } catch (error) {
-    logger.debug(`Error deleting user: ${error.message}`);
+    logger.info(`Error deleting user: ${error.message}`);
     res.sendError(error);
   }
 };

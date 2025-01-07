@@ -33,6 +33,7 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",
+    "logger": "^0.0.1",
     "mongoose": "^8.8.0",
     "sinon": "^19.0.2",
     "swagger-ui-express": "^5.0.1",

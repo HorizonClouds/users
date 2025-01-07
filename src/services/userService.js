@@ -10,32 +10,32 @@ router.use(express.json());
 
 export const getAllUsers = async () => {
   try {
-    logger.debug('Fetching all users');
+    logger.info('Fetching all users');
     return await UsersModel.find({});
   } catch (error) {
-    logger.debug('Error fetching users', error);
+    logger.info('Error fetching users', error);
     throw new BadRequestError('Error fetching users', error);
   }
 };
 
 export const createUser = async (data) => {
   try {
-    logger.debug('Creating new user with data:', data);
+    logger.info('Creating new user with data:', data);
     const newExample = new UsersModel(data);
     return await newExample.save();
   } catch (error) {
-    logger.debug('Error creating user', error);
+    logger.info('Error creating user', error);
     throw new BadRequestError('Error creating user', error);
   }
 };
 
 export const login = async (data, res) => {
   const { userName, password } = data;
-  logger.debug('Login attempt with username:', userName);
+  logger.info('Login attempt with username:', userName);
 
   const user = await UsersModel.findOne({ name: userName, password: password });
   if (!user) {
-    logger.debug('Invalid credentials, user not found');
+    logger.info('Invalid credentials, user not found');
     return sendError(res, {
       statusCode: 401,
       message: 'Invalid credentials',
@@ -43,7 +43,7 @@ export const login = async (data, res) => {
     });
   }
   
-  logger.debug(`User found: ${user.userId}`);
+  logger.info(`User found: ${user.userId}`);
   const tokenPayload = {
     user: {
       user: user.name,
@@ -52,9 +52,9 @@ export const login = async (data, res) => {
   };
   const token = jwt.sign(tokenPayload, config.jwtSecret, { expiresIn: '3h' });
   
-  logger.debug(`User ${user.userId} authenticated successfully`);
-  logger.debug(`Generated token: ${token}`);
-  logger.debug(`Token payload: ${JSON.stringify(tokenPayload)}`);
+  logger.info(`User ${user.userId} authenticated successfully`);
+  logger.info(`Generated token: ${token}`);
+  logger.info(`Token payload: ${JSON.stringify(tokenPayload)}`);
   
   return sendSuccess(res, {
     message: 'Authentication successful',
@@ -64,48 +64,48 @@ export const login = async (data, res) => {
 
 export const getUsersById = async (id) => {
   try {
-    logger.debug('Fetching user by ID:', id);
+    logger.info('Fetching user by ID:', id);
     const example = await UsersModel.findById(id);
     if (!example) {
-      logger.debug('User not found');
+      logger.info('User not found');
       throw new NotFoundError('user not found');
     }
     return example;
   } catch (error) {
-    logger.debug('Error fetching user by ID', error);
+    logger.info('Error fetching user by ID', error);
     throw new NotFoundError('user not found');
   }
 };
 
 export const updateUsers = async (id, data) => {
   try {
-    logger.debug('Updating user with ID:', id, 'and data:', data);
+    logger.info('Updating user with ID:', id, 'and data:', data);
     const updatedExample = await UsersModel.findByIdAndUpdate(id, data, {
       new: true,
       runValidators: true,
     });
     if (!updatedExample) {
-      logger.debug('User not found');
+      logger.info('User not found');
       throw new NotFoundError('user not found');
     }
     return updatedExample;
   } catch (error) {
-    logger.debug('Error updating user', error);
+    logger.info('Error updating user', error);
     throw new NotFoundError('user not found');
   }
 };
 
 export const deleteUsers = async (id) => {
   try {
-    logger.debug('Deleting user with ID:', id);
+    logger.info('Deleting user with ID:', id);
     const deletedExample = await UsersModel.findByIdAndDelete(id);
     if (!deletedExample) {
-      logger.debug('User not found');
+      logger.info('User not found');
       throw new NotFoundError('user not found');
     }
     return deletedExample;
   } catch (error) {
-    logger.debug('Error deleting user', error);
+    logger.info('Error deleting user', error);
     throw new NotFoundError('user not found');
   }
 };

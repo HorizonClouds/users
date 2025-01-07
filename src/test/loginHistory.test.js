@@ -60,7 +60,7 @@ describe('LoginHistory Service', () => {
       // Verificar el resultado
       expect(result._id).to.be.an.instanceof(mongoose.Types.ObjectId);
       expect(mockSavedLoginHistory._id).to.be.an.instanceof(mongoose.Types.ObjectId);
-      logger.debug(result._id.toString(), mockSavedLoginHistory._id.toString()); // Añadimos logs para ver los valores
+      logger.info(result._id.toString(), mockSavedLoginHistory._id.toString()); // Añadimos logs para ver los valores
       expect(result.userId.equals(userId)).to.be.true; // Verificar que los ObjectId de userId son iguales
       const resultDate = new Date(result.loginDate).toISOString().slice(0, -5); // Elimina los milisegundos
   
