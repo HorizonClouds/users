@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import logger from '../utils/logger.js'; // Asegúrate de que esta importación sea correcta
 
 export const passwordRecoveryRequestValidator = (req, res, next) => {
   const schema = Joi.object({
@@ -10,9 +11,12 @@ export const passwordRecoveryRequestValidator = (req, res, next) => {
     }),
   });
 
+  logger.debug('Starting password recovery request validation', req.body);
+
   const { error } = schema.validate(req.body);
 
   if (error) {
+    logger.debug('Validation error occurred', error.details);
     return res.status(400).json({
       success: false,
       message: 'Error de validación',
@@ -20,5 +24,6 @@ export const passwordRecoveryRequestValidator = (req, res, next) => {
     });
   }
 
+  logger.debug('Password recovery request validated successfully');
   next();
 };

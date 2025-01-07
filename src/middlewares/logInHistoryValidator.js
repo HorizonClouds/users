@@ -1,5 +1,6 @@
 import { body, param, validationResult } from 'express-validator';
 import { ValidationError } from '../utils/customErrors.js';
+import logger from '../utils/logger.js'; // Asegúrate de tener un logger configurado
 
 export const loginHistoryValidator = [
   // Validate 'userId' field
@@ -18,12 +19,18 @@ export const loginHistoryValidator = [
   // Middleware to handle validation errors
   (req, res, next) => {
     try {
+      logger.debug('Validating login history request', req.body);
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        logger.debug('Validation failed', errors.array());
         throw new ValidationError('Validation failed', errors.array());
       }
+
+      logger.debug('Validation succeeded');
       next();
     } catch (error) {
+      logger.error('Validation error', error);
       res.status(400).json({ error: error.message, details: error.errors || [] });
     }
   },
@@ -40,12 +47,18 @@ export const loginHistoryIdValidator = [
   // Middleware to handle validation errors
   (req, res, next) => {
     try {
+      logger.debug('Validating login history ID parameter', req.params.id);
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        logger.debug('Validation failed', errors.array());
         throw new ValidationError('Validation failed', errors.array());
       }
+
+      logger.debug('Validation succeeded');
       next();
     } catch (error) {
+      logger.error('Validation error', error);
       res.status(400).json({ error: error.message, details: error.errors || [] });
     }
   },
