@@ -1,9 +1,12 @@
 import FriendRequestModel from '../models/friendRequestModel.js';
 import userModel from '../models/userModel.js';
+import { sendNotificationToKafka } from '../utils/notificationProducer.js';
 
 // Crear una solicitud de amistad
 const createFriendRequest = async (requestData) => {
   const { userId, recipientUserId: recipientEmail } = requestData; // Renombrar recipientUserId a recipientEmail
+
+  const user1 = await userModel.findById(userId);
 
   // Buscar el usuario por email
   const userRecipient = await userModel.findOne({
@@ -41,6 +44,21 @@ const createFriendRequest = async (requestData) => {
 
   await newFriendRequest.save();
   logger.info('Friend request created successfully:', newFriendRequest);
+
+  try {
+    const transformedNotification = {
+      userId: userId,
+      config: {
+        email: true,
+      },
+      type: "message",
+      resourceId: newFriendRequest._id, 
+      notificationStatus: 'NOT SEEN',  
+    };
+    await sendNotificationToKafka(transformedNotification);
+  } catch (error) {
+    logger.info('Error al enviar a notifications ', error);
+  }
   return newFriendRequest;
 };
 
