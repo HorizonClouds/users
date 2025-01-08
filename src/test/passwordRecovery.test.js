@@ -1,105 +1,112 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import mongoose from 'mongoose';
-import PasswordRecoveryModel from '../models/passwordRecoveryRequestModel.js';
+import UserModel from '../models/userModel.js';
 import * as passwordRecoveryService from '../services/passwordRecoveryService.js';
 
-describe('PasswordRecoveryService', () => {
-  describe('createPasswordRecoveryRequest', () => {
-    let saveStub;
+describe('PasswordRecoveryService - Change Password', () => {
+  let findByIdStub;
+  let saveStub;
 
-    beforeEach(() => {
-      saveStub = sinon.stub(PasswordRecoveryModel.prototype, 'save');
-    });
-
-    afterEach(() => {
-      saveStub.restore();
-    });
-
-    it('should create a new password recovery request successfully', async () => {
-      const userId = new mongoose.Types.ObjectId(); // Genera un ObjectId válido
-      const token = 'sampleToken123';
-
-      const mockSavedRecoveryRequest = {
-        userId: userId.toString(), // Convierte el ObjectId a string aquí
-        token,
-        save: saveStub.resolves(),
-      };
-
-      saveStub.resolves(mockSavedRecoveryRequest);
-
-      const result = await passwordRecoveryService.createPasswordRecoveryRequest(userId, token);
-
-      // Convierte el userId a string para la comparación
-      expect(result.userId.toString()).to.equal(userId.toString());
-      expect(result.token).to.equal(token);
-      expect(saveStub.calledOnce).to.be.true;
-    });
-
-    it('should throw an error if there is an issue saving the recovery request', async () => {
-      const userId = new mongoose.Types.ObjectId();
-      const token = 'sampleToken123';
-
-      saveStub.rejects(new Error('Database error'));
-
-      try {
-        await passwordRecoveryService.createPasswordRecoveryRequest(userId, token);
-      } catch (error) {
-        expect(error.message).to.equal('Error al crear la solicitud de recuperación de contraseña: Database error');
-      }
-    });
+  beforeEach(() => {
+    findByIdStub = sinon.stub(UserModel, 'findById');
+    saveStub = sinon.stub(UserModel.prototype, 'save');
   });
 
-  describe('validatePasswordRecoveryToken', () => {
-    let findOneStub;
+  afterEach(() => {
+    sinon.restore();
+  });
 
-    beforeEach(() => {
-      findOneStub = sinon.stub(PasswordRecoveryModel, 'findOne');
-    });
+  it('should successfully change the user password if the current password is correct', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const currentPassword = 'currentPassword123';
+    const newPassword = 'newPassword456';
 
-    afterEach(() => {
-      findOneStub.restore();
-    });
+    const mockUser = {
+      _id: userId,
+      password: currentPassword,  // Usamos la contraseña actual
+      save: saveStub.resolves(),
+    };
 
-    it('should return true if the recovery token is valid and not expired', async () => {
-      const token = 'validToken123';
-      const mockRecoveryRequest = {
-        token,
-        expiresTokenTime: Date.now() + 1800000, // Token no ha expirado
-      };
+    findByIdStub.resolves(mockUser);
 
-      findOneStub.resolves(mockRecoveryRequest);
+    // Llamamos al servicio para cambiar la contraseña
+    const result = await passwordRecoveryService.changeUserPassword(
+      userId.toString(),
+      currentPassword,
+      newPassword
+    );
 
-      const result = await passwordRecoveryService.validatePasswordRecoveryToken(token);
+    // Verificamos si el usuario fue encontrado correctamente
+    expect(findByIdStub.calledOnceWith(userId.toString())).to.be.true;
 
-      expect(result).to.be.true;
-      expect(findOneStub.calledOnceWith({ token })).to.be.true;
-    });
+    // Verificamos que la contraseña se haya actualizado correctamente
+    expect(mockUser.password).to.equal(newPassword);  // Ahora debe ser la nueva contraseña
+    expect(saveStub.calledOnce).to.be.true;
 
-    it('should return false if the recovery token is not found', async () => {
-      const token = 'invalidToken123';
+    // Verificamos que el mensaje sea el esperado
+    expect(result.message).to.equal('Contraseña cambiada exitosamente');
+  });
 
-      findOneStub.resolves(null); // Simula que no se encuentra el token
+  it('should throw an error if the current password is incorrect', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const currentPassword = 'wrongPassword123';
+    const newPassword = 'newPassword456';
 
-      const result = await passwordRecoveryService.validatePasswordRecoveryToken(token);
+    const mockUser = {
+      _id: userId,
+      password: 'correctPassword123',  // Contraseña incorrecta
+    };
 
-      expect(result).to.be.false;
-      expect(findOneStub.calledOnceWith({ token })).to.be.true;
-    });
+    findByIdStub.resolves(mockUser);
 
-    it('should return false if the recovery token has expired', async () => {
-      const token = 'expiredToken123';
-      const mockRecoveryRequest = {
-        token,
-        expiresTokenTime: Date.now() - 1000, // Token ya ha expirado
-      };
+    try {
+      await passwordRecoveryService.changeUserPassword(userId.toString(), currentPassword, newPassword);
+    } catch (error) {
+      expect(error.message).to.equal('Error al actualizar la contraseña: La contraseña actual no es correcta');
+    }
 
-      findOneStub.resolves(mockRecoveryRequest);
+    expect(findByIdStub.calledOnceWith(userId.toString())).to.be.true;
+    expect(saveStub.called).to.be.false;
+  });
 
-      const result = await passwordRecoveryService.validatePasswordRecoveryToken(token);
+  it('should throw an error if the user is not found', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const currentPassword = 'currentPassword123';
+    const newPassword = 'newPassword456';
 
-      expect(result).to.be.false;
-      expect(findOneStub.calledOnceWith({ token })).to.be.true;
-    });
+    findByIdStub.resolves(null);
+
+    try {
+      await passwordRecoveryService.changeUserPassword(userId.toString(), currentPassword, newPassword);
+    } catch (error) {
+      expect(error.message).to.equal('Error al actualizar la contraseña: Usuario no encontrado');
+    }
+
+    expect(findByIdStub.calledOnceWith(userId.toString())).to.be.true;
+    expect(saveStub.called).to.be.false;
+  });
+
+  it('should throw an error if there is an issue saving the new password', async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const currentPassword = 'currentPassword123';
+    const newPassword = 'newPassword456';
+
+    const mockUser = {
+      _id: userId,
+      password: currentPassword,
+      save: saveStub.rejects(new Error('Database error')),
+    };
+
+    findByIdStub.resolves(mockUser);
+
+    try {
+      await passwordRecoveryService.changeUserPassword(userId.toString(), currentPassword, newPassword);
+    } catch (error) {
+      expect(error.message).to.equal('Error al actualizar la contraseña: Database error');
+    }
+
+    expect(findByIdStub.calledOnceWith(userId.toString())).to.be.true;
+    expect(saveStub.calledOnce).to.be.true;
   });
 });

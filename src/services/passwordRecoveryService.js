@@ -1,49 +1,36 @@
-import PasswordRecoveryModel from '../models/passwordRecoveryRequestModel.js';
+// services/passwordRecoveryService.js
 
-export const createPasswordRecoveryRequest = async (userId, token) => {
+import User from '../models/userModel.js'; // Asegúrate de que este es tu modelo de usuario
+
+export const changeUserPassword = async (userId, currentPassword, newPassword) => {
   try {
-    logger.info('Creating password recovery request for userId:', userId);
-
-    // Crear una nueva solicitud de recuperación de contraseña
-    const recoveryRequest = new PasswordRecoveryModel({
-      userId,
-      token,
-    });
-
-    // Guardar la solicitud en la base de datos
-    await recoveryRequest.save();
-
-    logger.info('Password recovery request created successfully:', recoveryRequest);
-    return recoveryRequest;
-  } catch (error) {
-    logger.info('Error creating password recovery request:', error);
-    throw new Error('Error al crear la solicitud de recuperación de contraseña: ' + error.message);
-  }
-};
-
-export const validatePasswordRecoveryToken = async (token) => {
-  try {
-    logger.info('Validating password recovery token:', token);
-
-    // Buscar la solicitud de recuperación por token
-    const recoveryRequest = await PasswordRecoveryModel.findOne({ token });
-
-    if (!recoveryRequest) {
-      logger.info('Password recovery token not found');
-      throw new Error('Token de recuperación no encontrado');
+    // Obtener al usuario de la base de datos
+    console.log('Buscando usuario con ID:', userId);
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log('Usuario no encontrado');
+      throw new Error('Usuario no encontrado');
     }
 
-    // Verificar si el token ha expirado
-    if (recoveryRequest.expiresTokenTime < Date.now()) {
-      logger.info('Password recovery token expired');
-      throw new Error('Token de recuperación expirado');
+    // Mostrar las contraseñas para depuración
+    console.log('Contraseña actual proporcionada:', currentPassword);
+    console.log('Contraseña almacenada:', user.password);
+
+    // Comparar la contraseña actual con la almacenada (sin cifrado)
+    if (currentPassword !== user.password) {
+      console.log('Las contraseñas no coinciden');
+      throw new Error('La contraseña actual no es correcta');
     }
 
-    logger.info('Password recovery token is valid');
-    return true;
+    // Si las contraseñas coinciden, actualizamos la contraseña
+    user.password = newPassword; // Aquí la nueva contraseña se guarda en texto plano
+    await user.save();
+
+    return {
+      message: 'Contraseña cambiada exitosamente',
+    };
   } catch (error) {
-    logger.info('Error validating password recovery token:', error);
-    logger.info(error);
-    return false;
+    console.log('Error al actualizar la contraseña:', error.message);
+    throw new Error(`Error al actualizar la contraseña: ${error.message}`);
   }
 };

@@ -639,12 +639,12 @@ paths:
                   timestamp:
                     type: string
                     example: '2023-10-01T12:00:00.000Z'
-  /password-recovery-request:
-    post:
-      summary: Solicitar la recuperación de contraseña
+
+  /password/change:
+    put:
+      summary: Cambiar la contraseña del usuario
       tags:
         - Password Recovery
-      operationId: createPasswordRecoveryRequest
       requestBody:
         required: true
         content:
@@ -654,46 +654,36 @@ paths:
               properties:
                 userId:
                   type: string
-                  description: Id del usuario para el cual se solicita la recuperación
-                  example: "user456"
-      responses:
-        '201':
-          description: Solicitud de recuperación de contraseña creada con éxito
-        '400':
-          description: Error de validación (por ejemplo, si el correo no está registrado)
-        '404':
-          description: No se encuentra el correo electrónico registrado
-  /password-recovery-request/{recoveryToken}:
-    put:
-      summary: Validar y restablecer la contraseña utilizando un token de recuperación
-      tags:
-        - Password Recovery
-      operationId: resetPassword
-      parameters:
-        - name: recoveryToken
-          in: path
-          required: true
-          description: Token de recuperación para verificar la solicitud
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
+                  description: ID del usuario.
+                currentPassword:
+                  type: string
+                  description: Contraseña actual del usuario.
                 newPassword:
                   type: string
-                  description: Nueva contraseña para el usuario
-                  example: "NewSecurePassword123!"
+                  description: Nueva contraseña que se desea establecer.
       responses:
-        '200':
-          description: Contraseña restablecida con éxito
-        '400':
-          description: Error de validación o contraseña no segura
-        '404':
-          description: Token de recuperación no válido o expirado
+        200:
+          description: Contraseña cambiada exitosamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+        400:
+          description: Error en los datos proporcionados o en la autenticación.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
 
   /friend-request:
     post:
@@ -723,6 +713,7 @@ paths:
           description: Error de validación o solicitud pendiente existente
         '404':
           description: No se encuentra la solicitud pendiente
+
   /friend-request/accept/{requestId}:
     put:
       summary: Aceptar una solicitud de amistad
