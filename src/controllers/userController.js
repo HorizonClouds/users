@@ -37,7 +37,6 @@ export const createUser = async (req, res, next) => {
     );
   } catch (error) {
     logger.info(`Error creating user: ${error.message}`);
-    throw new BadRequestError('Error creating user', error);
   }
 };
 
